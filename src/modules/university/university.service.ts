@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { University } from './university.entity';
 import { CreateUniversityDto } from './dto/create-university.dto';
+import { UpdateUniversityDto } from './dto/update-university.dto';
 
 @Injectable()
 export class UniversityService {
@@ -11,16 +12,26 @@ export class UniversityService {
     private readonly universityRepository: Repository<University>,
   ) {}
 
-  async create(createUniversityDto: CreateUniversityDto) {
+  create(createUniversityDto: CreateUniversityDto) {
     const university = this.universityRepository.create(createUniversityDto);
-    return await this.universityRepository.save(university);
+    return this.universityRepository.save(university);
   }
 
-  async findAll() {
-    return await this.universityRepository.find();
+  findAll() {
+    return this.universityRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.universityRepository.findOne({ where: { id } });
+  findOne(id: number) {
+    return this.universityRepository.findOne({ where: { id: id } });
+  }
+
+  async update(id: number, updateUniversityDto: UpdateUniversityDto) {
+    await this.universityRepository.update(id, updateUniversityDto);
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    await this.universityRepository.delete(id);
+    return { message: 'University deleted successfully' };
   }
 }
