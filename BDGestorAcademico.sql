@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT exists GestorAcademico; 
+CREATE DATABASE IF NOT exists AcademicManager; 
 
-USE GestorAcademico;
+USE AcademicManager;
 
 CREATE TABLE University(
 	codigo int Primary key auto_increment,
