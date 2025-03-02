@@ -11,16 +11,16 @@ export class UniversityService {
     private readonly universityRepository: Repository<University>,
   ) {}
 
-  create(createUniversityDto: CreateUniversityDto) {
+  async create(createUniversityDto: CreateUniversityDto) {
     const university = this.universityRepository.create(createUniversityDto);
-    return this.universityRepository.save(university);
+    return await this.universityRepository.save(university);
   }
 
-  findAll() {
-    return this.universityRepository.find();
+  async findAll() {
+    return await this.universityRepository.find();
   }
 
-  findOne(id: number) {
-    return this.universityRepository.findOne({ where: { codigo: id } });
+  async findOne(id: number) {
+    return await this.universityRepository.findOne({ where: { id } });
   }
 }

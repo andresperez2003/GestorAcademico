@@ -3,15 +3,15 @@ CREATE DATABASE IF NOT exists AcademicManager;
 USE AcademicManager;
 
 CREATE TABLE University(
-	codigo int Primary key auto_increment,
+	id int Primary key auto_increment,
     name varchar(50)
 );
 
 CREATE TABLE Department(
-	codigo int Primary key auto_increment,
+	id int Primary key auto_increment,
     name varchar(50),
     universityId int,
-    Foreign key(universityId) References University(codigo)
+    Foreign key(universityId) References University(id)
 );
 
 
@@ -20,25 +20,25 @@ CREATE TABLE Professor(
     firstName varchar(30),
     lastName varchar(30),
     departmentId int,
-    Foreign key(departmentId) references Department(codigo)
+    Foreign key(departmentId) references Department(id)
 );
 
 CREATE TABLE Course(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     name varchar(30),
     description varchar(100),
     departmentId int,
     professorId varchar(20),
-    foreign key(departmentId) references Department(codigo),
+    foreign key(departmentId) references Department(id),
     foreign key(professorId) references Professor(identification)
 );
 
 CREATE TABLE Prerequisite(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     courseToTake int,
     prerequisiteCourse int,
-    foreign key(courseToTake) references Course(codigo),
-    foreign key(prerequisiteCourse) references Course(codigo)
+    foreign key(courseToTake) references Course(id),
+    foreign key(prerequisiteCourse) references Course(id)
 );
 
 CREATE TABLE Student(
@@ -47,42 +47,42 @@ CREATE TABLE Student(
     lastName varchar(30),
     birthDate Date,
     departmentId int,
-    foreign key(departmentId) references Department(codigo)
+    foreign key(departmentId) references Department(id)
 );
 
 CREATE TABLE Enrollment(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     enrollmentDate Date,
     studentId varchar(20),
     courseId int,
     foreign key(studentId) references Student(identification),
-    foreign key(courseId) references Course(codigo)
+    foreign key(courseId) references Course(id)
 );
 
 CREATE TABLE EvaluationType(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     name varchar(30),
     percentage float
 );
 
 CREATE TABLE Evaluation(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     evaluationDate Date,
     grade float,
     evaluationType varchar(30),
     enrollmentId int,
     evaluationTypeId int,
-    foreign key(enrollmentId) references Enrollment(codigo),
-    foreign key(evaluationTypeId) references EvaluationType(codigo)
+    foreign key(enrollmentId) references Enrollment(id),
+    foreign key(evaluationTypeId) references EvaluationType(id)
 );
 
 CREATE TABLE Schedule(
-	codigo int primary key auto_increment,
+	id int primary key auto_increment,
     startTime time,
     endTime time,
     dayOfWeek varchar(10),
     courseId int,
-    foreign key(courseId) references Course(codigo)
+    foreign key(courseId) references Course(id)
 );
 
 INSERT INTO University (name) VALUES ('Autonomous University of Manizales');
@@ -305,33 +305,33 @@ SELECT * FROM Schedule;
 SELECT S.identification, S.firstName, S.lastName, C.name AS Course
 FROM Student S
 JOIN Enrollment E ON S.identification = E.studentId
-JOIN Course C ON E.courseId = C.codigo;
+JOIN Course C ON E.courseId = C.id;
 
 -- Complete information of the evaluation
 SELECT 
-    Eval.codigo AS EvaluationID,
+    Eval.id AS EvaluationID,
     Eval.evaluationDate,
     Eval.grade,
     Eval.evaluationType,
-    E.codigo AS EnrollmentID,
+    E.id AS EnrollmentID,
     ET.name AS EvaluationType,
     S.firstName AS Student,
     C.name AS Course
 FROM Evaluation Eval
-JOIN Enrollment E ON Eval.enrollmentId = E.codigo
+JOIN Enrollment E ON Eval.enrollmentId = E.id
 JOIN Student S ON E.studentId = S.identification
-JOIN Course C ON E.courseId = C.codigo
-JOIN EvaluationType ET ON Eval.evaluationTypeId = ET.codigo;
+JOIN Course C ON E.courseId = C.id
+JOIN EvaluationType ET ON Eval.evaluationTypeId = ET.id;
 
 -- Complete information of the course
 SELECT 
-    C.codigo AS CourseID,
+    C.id AS CourseID,
     C.name AS CourseName,
     CONCAT(P.firstName, ' ', P.lastName) AS Professor,
     D.name AS Department
 FROM Course C
 JOIN Professor P ON C.professorId = P.identification
-JOIN Department D ON C.departmentId = D.codigo;
+JOIN Department D ON C.departmentId = D.id;
 
 -- Prerequisites of the course
 SELECT 
@@ -340,7 +340,7 @@ SELECT
     P.prerequisiteCourse AS Prerequisite,
     PC.name AS PrerequisiteCourse
 FROM Prerequisite P
-JOIN Course CT ON P.courseToTake = CT.codigo
-JOIN Course PC ON P.prerequisiteCourse = PC.codigo;
+JOIN Course CT ON P.courseToTake = CT.id
+JOIN Course PC ON P.prerequisiteCourse = PC.id;
 
 
