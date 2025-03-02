@@ -14,12 +14,6 @@ CREATE TABLE Department(
     Foreign key(universityId) References University(codigo)
 );
 
-CREATE TABLE Career(
-	codigo int primary key auto_increment,
-    name varchar(30),
-    departmentId int,
-    foreign key(departmentId) references Department(codigo)
-);
 
 CREATE TABLE Professor(
 	identification varchar(20) primary key,
@@ -298,7 +292,6 @@ INSERT INTO Evaluation (evaluationDate, grade, evaluationType, enrollmentId, eva
 
 SELECT * FROM University;
 SELECT * FROM Department;
-SELECT * FROM Career;
 SELECT * FROM Professor;
 SELECT * FROM Course;
 SELECT * FROM Prerequisite;
