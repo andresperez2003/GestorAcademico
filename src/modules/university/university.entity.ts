@@ -1,14 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('university')
+@Entity()
 export class University {
   @PrimaryGeneratedColumn()
   codigo: number;
 
-  @Column({ length: 50, unique: true })
-  nombre: string;
-
-
-/*   @OneToMany(() => Departamento, (departamento) => departamento.universidad)
-  departamentos: Departamento[]; */
+  @Column({ length: 50 })
+  name: string;
 }
