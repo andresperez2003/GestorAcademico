@@ -84,16 +84,22 @@ export class EnrollmentService {
   }
 
   async findAll() {
-    return await this.enrollmentRepository.find({ relations: ['student', 'course'] });
+    return await this.enrollmentRepository.find({ relations: ['student', 'course', 'evaluations'] });
   }
-
+  
   async findOne(id: number) {
-    const enrollment = await this.enrollmentRepository.findOne({ where: { id }, relations: ['student', 'course'] });
+    const enrollment = await this.enrollmentRepository.findOne({ 
+      where: { id }, 
+      relations: ['student', 'course', 'evaluations'] 
+    });
+  
     if (!enrollment) {
       throw new NotFoundException(`Enrollment with id ${id} not found`);
     }
+  
     return enrollment;
   }
+  
 
   async update(id: number, updateEnrollmentDto: UpdateEnrollmentDto) {
     try {
