@@ -2,6 +2,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Professor } from '../professor/professor.entity';
 import { Prerequisite } from '../prerequisite/prerequisite.entity';
+import { Schedule } from '../schedule/schedule.entity';
 
 @Entity()
 export class Course {
@@ -24,5 +25,9 @@ export class Course {
   // Relación inversa: un curso puede ser prerequisito de otros cursos
   @OneToMany(() => Prerequisite, prerequisite => prerequisite.prerequisite)
   requiredBy: Prerequisite[];
+
+  // Relación con Schedule: un curso puede tener varios horarios
+  @OneToMany(() => Schedule, schedule => schedule.course)
+  schedules: Schedule[];
 
 }
