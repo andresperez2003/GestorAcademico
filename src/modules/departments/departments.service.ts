@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from './department.entity';
 import { Repository } from 'typeorm';
@@ -14,26 +14,46 @@ export class DepartmentsService {
   ) {}
 
   async create(createDepartmentDto: CreateDepartmentDto) {
-    const university = this.departmentRepository.create(createDepartmentDto);
-    return await this.departmentRepository.save(university);
+      try {
+        const university = this.departmentRepository.create(createDepartmentDto);
+        return await this.departmentRepository.save(university);
+      } catch (error) {
+        return new InternalServerErrorException('Error creating department');
+      }
   }
 
   async findAll() {
-    return await this.departmentRepository.find();
+      return await this.departmentRepository.find();
   }
 
   async findOne(id: number) {
-    return await this.departmentRepository.findOne({ where: { id } });
+    const department = await this.departmentRepository.findOne({ where: { id } });
+    if (!department) {
+        return new NotFoundException(`Department with id ${id} not found`);
+    }
+    return department;
   }
 
-    async update(id: number, updateUniversityDto: UpdateDepartmentDto) {
+  async update(id: number, updateUniversityDto: UpdateDepartmentDto) {
+    try {
+      const department = await this.departmentRepository.findOne({ where: { id } });
+      if (!department) {
+          return new NotFoundException(`Department with id ${id} not found`);
+      }
       await this.departmentRepository.update(id, updateUniversityDto);
       return this.findOne(id);
+    } catch (error) {
+        return new InternalServerErrorException('Error updating department');
     }
-  
-    async remove(id: number) {
-      await this.departmentRepository.delete(id);
-      return { message: 'Department deleted successfully' };
+  }
+    
+  async remove(id: number) {
+    const department = await this.departmentRepository.findOne({ where: { id } });
+    if (!department) {
+        return new NotFoundException(`Department with id ${id} not found`);
     }
+    await this.departmentRepository.delete(id);
+    return { message: 'Department deleted successfully' };
+  }
 
 }

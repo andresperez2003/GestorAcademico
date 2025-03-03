@@ -6,5 +6,5 @@ export class UpdateDepartmentDto {
   name: string;
 
   @IsNumber()
-  universityId: number;
+  universityId?: number;
 }
