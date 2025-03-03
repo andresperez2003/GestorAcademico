@@ -23,7 +23,7 @@ export class DepartmentsService {
   }
 
   async findAll() {
-      return await this.departmentRepository.find();
+    return await this.departmentRepository.find({ relations: ['university'] });
   }
 
   async findOne(id: number) {
