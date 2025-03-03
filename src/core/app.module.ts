@@ -9,6 +9,7 @@ import { CourseModule } from 'src/modules/course/course.module';
 import { PrerequisiteModule } from 'src/modules/prerequisite/prerequisite.module';
 import { ProfessorModule } from 'src/modules/professor/professor.module';
 import { ScheduleModule } from 'src/modules/schedule/schedule.module';
+import { EnrollmentModule } from 'src/modules/enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { ScheduleModule } from 'src/modules/schedule/schedule.module';
     CourseModule,
     PrerequisiteModule,
     ProfessorModule,
-    ScheduleModule
+    ScheduleModule,
+    EnrollmentModule
   ],
 })
 export class AppModule {}

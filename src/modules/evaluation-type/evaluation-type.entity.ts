@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Evaluation } from '../evaluation/evaluation.entity';
 
 @Entity()
 export class EvaluationType {
@@ -10,4 +11,8 @@ export class EvaluationType {
 
   @Column({ type: 'float' })
   percentage: number;
+
+  @OneToMany(() => Evaluation, evaluation => evaluation.evaluationType)
+  evaluations: Evaluation[];
+
 }

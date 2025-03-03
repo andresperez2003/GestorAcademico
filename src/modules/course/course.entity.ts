@@ -1,8 +1,8 @@
-// course.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Professor } from '../professor/professor.entity';
 import { Prerequisite } from '../prerequisite/prerequisite.entity';
 import { Schedule } from '../schedule/schedule.entity';
+import { Enrollment } from '../enrollment/enrollment.entity';
 
 @Entity()
 export class Course {
@@ -15,19 +15,23 @@ export class Course {
   @Column({ length: 255 })
   description: string;
 
-  @ManyToOne(() => Professor, professor => professor.courses, { onDelete: 'SET NULL' })
+  // Relación con Professor: Un curso puede tener un profesor asignado (opcional)
+  @ManyToOne(() => Professor, professor => professor.courses, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'professorId' }) // Para explicitar la clave foránea
   professor: Professor;
 
-  // Relación con Prerequisite: un curso puede tener varios prerequisitos
+  // Un curso puede tener varios prerrequisitos
   @OneToMany(() => Prerequisite, prerequisite => prerequisite.course)
   prerequisites: Prerequisite[];
 
-  // Relación inversa: un curso puede ser prerequisito de otros cursos
+  // Un curso puede ser prerrequisito de otros cursos
   @OneToMany(() => Prerequisite, prerequisite => prerequisite.prerequisite)
   requiredBy: Prerequisite[];
 
-  // Relación con Schedule: un curso puede tener varios horarios
+  // Un curso puede tener varios horarios asociados
   @OneToMany(() => Schedule, schedule => schedule.course)
   schedules: Schedule[];
 
+  @OneToMany(() => Enrollment, enrollment => enrollment.course)
+  enrollments: Enrollment[];
 }
