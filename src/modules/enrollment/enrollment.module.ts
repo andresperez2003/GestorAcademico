@@ -6,16 +6,18 @@ import { EnrollmentService } from './enrollment.service';
 import { CourseModule } from '../course/course.module';
 import { PrerequisiteModule } from '../prerequisite/prerequisite.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
+import { StudentsModule } from '../students/students.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Enrollment]),
     CourseModule,
     PrerequisiteModule,
-    EvaluationModule, // ✅ Importado correctamente
+    EvaluationModule,
+    StudentsModule,
   ],
   controllers: [EnrollmentController],
   providers: [EnrollmentService],
-  exports: [EnrollmentService], 
+  exports: [EnrollmentService],
 })
 export class EnrollmentModule {}

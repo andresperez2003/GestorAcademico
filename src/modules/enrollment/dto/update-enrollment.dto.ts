@@ -4,13 +4,13 @@ import { IsDate, IsInt, IsNotEmpty } from 'class-validator';
 export class UpdateEnrollmentDto {
   @IsNotEmpty()
   @IsDate()
-  enrollmentDate: Date;
+  enrollmentDate?: Date;
 
   @IsNotEmpty()
   @IsInt()
-  studentId: number;
+  studentId?: number;
 
   @IsNotEmpty()
   @IsInt()
-  courseId: number;
+  courseId:number;
 }
