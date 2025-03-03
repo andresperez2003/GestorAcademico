@@ -27,9 +27,7 @@ CREATE TABLE Course(
 	id int primary key auto_increment,
     name varchar(30),
     description varchar(100),
-    departmentId int,
     professorId varchar(20),
-    foreign key(departmentId) references Department(id),
     foreign key(professorId) references Professor(identification)
 );
 
@@ -45,9 +43,7 @@ CREATE TABLE Student(
 	identification varchar(20) primary key,
     firstName varchar(30),
     lastName varchar(30),
-    birthDate Date,
-    departmentId int,
-    foreign key(departmentId) references Department(id)
+    birthDate Date
 );
 
 CREATE TABLE Enrollment(
@@ -103,16 +99,16 @@ INSERT INTO Professor (identification, firstName, lastName, departmentId) VALUES
 ('P008', 'Luis', 'Vega', 3),
 ('P009', 'Carolina', 'Rojas', 3);
 
-INSERT INTO Course (name, description, departmentId, professorId) VALUES 
-('Basic Programming', 'Introduction to programming', 1, 'P001'),
-('Data Structures', 'Use of data structures', 1, 'P002'),
-('Databases', 'Database management', 1, 'P003'),
-('Basic Mathematics', 'Fundamental concepts', 2, 'P004'),
-('Differential Calculus', 'Derivatives and limits', 2, 'P005'),
-('Differential Equations', 'Solution of equations', 2, 'P006'),
-('Electrical Circuits', 'Circuit analysis', 3, 'P007'),
-('Digital Electronics', 'Digital systems', 3, 'P008'),
-('Embedded Systems', 'Microcontroller programming', 3, 'P009');
+INSERT INTO Course (name, description, professorId) VALUES 
+('Basic Programming', 'Introduction to programming', 'P001'),
+('Data Structures', 'Use of data structures', 'P002'),
+('Databases', 'Database management', 'P003'),
+('Basic Mathematics', 'Fundamental concepts', 'P004'),
+('Differential Calculus', 'Derivatives and limits', 'P005'),
+('Differential Equations', 'Solution of equations', 'P006'),
+('Electrical Circuits', 'Circuit analysis', 'P007'),
+('Digital Electronics', 'Digital systems', 'P008'),
+('Embedded Systems', 'Microcontroller programming', 'P009');
 
 INSERT INTO Prerequisite (courseToTake, prerequisiteCourse) VALUES 
 (2, 1),  -- Data Structures requires Basic Programming
@@ -127,53 +123,53 @@ INSERT INTO EvaluationType (name, percentage) VALUES
 ('Exam', 50.0),
 ('Project', 45.0),
 ('Workshop', 5.0);
+INSERT INTO Student (identification, firstName, lastName, birthDate) VALUES
+('E001', 'Juan', 'Perez', '2003-05-12'),
+('E002', 'Ana', 'Gomez', '2004-07-19'),
+('E003', 'Carlos', 'Lopez', '2002-03-15'),
+('E004', 'Maria', 'Diaz', '2001-11-30'),
+('E005', 'Luis', 'Martinez', '2003-06-20'),
+('E006', 'Elena', 'Rodriguez', '2002-09-10'),
+('E007', 'Pedro', 'Fernandez', '2003-12-01'),
+('E008', 'Lucia', 'Ramirez', '2001-05-22'),
+('E009', 'Ricardo', 'Torres', '2002-07-14'),
+('E010', 'Camila', 'Vargas', '2003-08-18'),
+('E011', 'Andres', 'Mendoza', '2001-10-09'),
+('E012', 'Sofia', 'Jimenez', '2004-02-14'),
+('E013', 'Diego', 'Castro', '2002-04-17'),
+('E014', 'Valeria', 'Rojas', '2003-11-28'),
+('E015', 'Fernando', 'Gutierrez', '2001-06-05'),
+('E016', 'Gabriel', 'Ortiz', '2003-01-15'),
+('E017', 'Patricia', 'Suarez', '2002-08-24'),
+('E018', 'David', 'Sanchez', '2001-12-30'),
+('E019', 'Daniela', 'Morales', '2004-06-18'),
+('E020', 'Jorge', 'Nuñez', '2002-09-10'),
+('E021', 'Raquel', 'Vargas', '2003-05-22'),
+('E022', 'Oscar', 'Salazar', '2004-03-19'),
+('E023', 'Manuel', 'Luna', '2001-07-12'),
+('E024', 'Jessica', 'Pineda', '2002-10-29'),
+('E025', 'Adriana', 'Espinoza', '2003-11-14'),
+('E026', 'Gustavo', 'Herrera', '2001-06-07'),
+('E027', 'Carmen', 'Mejia', '2004-01-25'),
+('E028', 'Rodrigo', 'Garrido', '2003-04-03'),
+('E029', 'Angela', 'Beltran', '2001-09-08'),
+('E030', 'Vicente', 'Avila', '2002-11-26'),
+('E031', 'Sebastian', 'Ortega', '2002-05-30'),
+('E032', 'Nicolas', 'Guerra', '2003-08-14'),
+('E033', 'Carla', 'Fernandez', '2001-12-01'),
+('E034', 'Martina', 'Lopez', '2002-07-23'),
+('E035', 'Hector', 'Vasquez', '2004-04-20'),
+('E036', 'Emilia', 'Paredes', '2003-10-11'),
+('E037', 'Leonardo', 'Cortez', '2002-06-25'),
+('E038', 'Marta', 'Silva', '2001-09-18'),
+('E039', 'Isabel', 'Ruiz', '2004-05-27'),
+('E040', 'Pablo', 'Mendoza', '2002-03-12'),
+('E041', 'Andrea', 'Castillo', '2003-07-08'),
+('E042', 'Esteban', 'Navarro', '2001-11-21'),
+('E043', 'Belen', 'Guerrero', '2004-02-05'),
+('E044', 'Facundo', 'Rico', '2003-09-30'),
+('E045', 'Renata', 'Delgado', '2001-12-15');
 
-INSERT INTO Student (identification, firstName, lastName, birthDate, departmentId) VALUES
-('E001', 'Juan', 'Perez', '2003-05-12', 1),
-('E002', 'Ana', 'Gomez', '2004-07-19', 2),
-('E003', 'Carlos', 'Lopez', '2002-03-15', 1),
-('E004', 'Maria', 'Diaz', '2001-11-30', 3),
-('E005', 'Luis', 'Martinez', '2003-06-20', 1),
-('E006', 'Elena', 'Rodriguez', '2002-09-10', 2),
-('E007', 'Pedro', 'Fernandez', '2003-12-01', 3),
-('E008', 'Lucia', 'Ramirez', '2001-05-22', 1),
-('E009', 'Ricardo', 'Torres', '2002-07-14', 2),
-('E010', 'Camila', 'Vargas', '2003-08-18', 3),
-('E011', 'Andres', 'Mendoza', '2001-10-09', 1),
-('E012', 'Sofia', 'Jimenez', '2004-02-14', 2),
-('E013', 'Diego', 'Castro', '2002-04-17', 3),
-('E014', 'Valeria', 'Rojas', '2003-11-28', 1),
-('E015', 'Fernando', 'Gutierrez', '2001-06-05', 2),
-('E016', 'Gabriel', 'Ortiz', '2003-01-15', 2),
-('E017', 'Patricia', 'Suarez', '2002-08-24', 2),
-('E018', 'David', 'Sanchez', '2001-12-30', 2),
-('E019', 'Daniela', 'Morales', '2004-06-18', 2),
-('E020', 'Jorge', 'Nuñez', '2002-09-10', 2),
-('E021', 'Raquel', 'Vargas', '2003-05-22', 2),
-('E022', 'Oscar', 'Salazar', '2004-03-19', 2),
-('E023', 'Manuel', 'Luna', '2001-07-12', 2),
-('E024', 'Jessica', 'Pineda', '2002-10-29', 2),
-('E025', 'Adriana', 'Espinoza', '2003-11-14', 2),
-('E026', 'Gustavo', 'Herrera', '2001-06-07', 3),
-('E027', 'Carmen', 'Mejia', '2004-01-25', 3),
-('E028', 'Rodrigo', 'Garrido', '2003-04-03', 3),
-('E029', 'Angela', 'Beltran', '2001-09-08', 3),
-('E030', 'Vicente', 'Avila', '2002-11-26', 3),
-('E031', 'Sebastian', 'Ortega', '2002-05-30', 2),
-('E032', 'Nicolas', 'Guerra', '2003-08-14', 2),
-('E033', 'Carla', 'Fernandez', '2001-12-01', 2),
-('E034', 'Martina', 'Lopez', '2002-07-23', 2),
-('E035', 'Hector', 'Vasquez', '2004-04-20', 2),
-('E036', 'Emilia', 'Paredes', '2003-10-11', 3),
-('E037', 'Leonardo', 'Cortez', '2002-06-25', 3),
-('E038', 'Marta', 'Silva', '2001-09-18', 3),
-('E039', 'Isabel', 'Ruiz', '2004-05-27', 3),
-('E040', 'Pablo', 'Mendoza', '2002-03-12', 3),
-('E041', 'Andrea', 'Castillo', '2003-07-08', 3),
-('E042', 'Esteban', 'Navarro', '2001-11-21', 3),
-('E043', 'Belen', 'Guerrero', '2004-02-05', 3),
-('E044', 'Facundo', 'Rico', '2003-09-30', 3),
-('E045', 'Renata', 'Delgado', '2001-12-15', 3);
 
 INSERT INTO Enrollment (enrollmentDate, studentId, courseId) VALUES
 ('2025-03-01', 'E001', 1),
@@ -327,11 +323,9 @@ JOIN EvaluationType ET ON Eval.evaluationTypeId = ET.id;
 SELECT 
     C.id AS CourseID,
     C.name AS CourseName,
-    CONCAT(P.firstName, ' ', P.lastName) AS Professor,
-    D.name AS Department
+    CONCAT(P.firstName, ' ', P.lastName) AS Professor
 FROM Course C
-JOIN Professor P ON C.professorId = P.identification
-JOIN Department D ON C.departmentId = D.id;
+JOIN Professor P ON C.professorId = P.identification;
 
 -- Prerequisites of the course
 SELECT 
