@@ -6,13 +6,13 @@ import { Course } from '../course/course.entity';
 @Entity()
 export class Professor {
   @PrimaryGeneratedColumn()
-  id: number;
+  identification: string;
 
   @Column({ length: 100 })
-  name: string;
+  firstName: string;
 
   @Column({ length: 100 })
-  email: string;
+  lastName: string;
 
   @OneToMany(() => Course, course => course.professor, { cascade: true })
   courses: Course[];

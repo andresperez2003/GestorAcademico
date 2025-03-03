@@ -22,17 +22,17 @@ export class ProfessorService {
     return this.professorRepository.find({ relations: ['department'] });
   }
 
-  findOne(id: number) {
-    return this.professorRepository.findOne({ where: { id }, relations: ['department'] });
+  findOne(id: string) {
+    return this.professorRepository.findOne({ where: { identification:id }, relations: ['department'] });
   }
 
-  async update(id: number, updateProfessorDto: UpdateProfessorDto) {
-    await this.professorRepository.update(id, updateProfessorDto);
+  async update(id: string, updateProfessorDto: UpdateProfessorDto) {
+    await this.professorRepository.update({identification:id}, updateProfessorDto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
-    await this.professorRepository.delete(id);
+  async remove(id: string) {
+    await this.professorRepository.delete({identification:id});
     return { message: 'Professor deleted successfully' };
   }
 }

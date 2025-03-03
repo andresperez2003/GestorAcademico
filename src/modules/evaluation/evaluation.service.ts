@@ -23,33 +23,20 @@ export class EvaluationService {
     
       async findAll() {
         return await this.evaluationRepository.find({
-          relations: [
-            'enrollment',
-            'enrollment.student',  // Incluye el estudiante dentro del enrollment
-            'enrollment.course',   // Incluye el curso dentro del enrollment
-            'evaluationType'
-          ],
+          relations: ['enrollment', 'evaluationType'], // Asegura que las relaciones se carguen
         });
       }
-      
+    
       async findOne(id: number) {
         const evaluation = await this.evaluationRepository.findOne({
           where: { id },
-          relations: [
-            'enrollment', 
-            'enrollment.student',  // Incluye el estudiante dentro del enrollment
-            'enrollment.course',   // Incluye el curso dentro del enrollment
-            'evaluationType'
-          ],
+          relations: ['enrollment', 'evaluationType'], // Cargar relaciones
         });
-      
         if (!evaluation) {
-          throw new NotFoundException(`Evaluation with id ${id} not found`);
+            return new NotFoundException(`Evaluation with id ${id} not found`);
         }
-      
         return evaluation;
       }
-      
     
       async update(id: number, updateEvaluationDto: UpdateEvaluationDto) {
         try {

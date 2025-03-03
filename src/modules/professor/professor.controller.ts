@@ -19,17 +19,17 @@ export class ProfessorController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.professorService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateProfessorDto: UpdateProfessorDto) {
+  update(@Param('id') id: string, @Body() updateProfessorDto: UpdateProfessorDto) {
     return this.professorService.update(id, updateProfessorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.professorService.remove(id);
   }
 }
