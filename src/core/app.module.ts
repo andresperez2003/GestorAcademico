@@ -2,9 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { University } from '../modules/university/university.entity';
 import { UniversityModule } from '../modules/university/university.module';
-import { DepartmentsModule } from '../modules/departments/departments.module';
 import { StudentsModule } from 'src/modules/students/students.module';
 import { EvaluationTypeModule } from 'src/modules/evaluation-type/evaluation-type.module';
+import { DepartmentsModule } from 'src/modules/department/departments.module';
+import { CourseModule } from 'src/modules/course/course.module';
+import { PrerequisiteModule } from 'src/modules/prerequisite/prerequisite.module';
+import { ProfessorModule } from 'src/modules/professor/professor.module';
+import { ScheduleModule } from 'src/modules/schedule/schedule.module';
 
 @Module({
   imports: [
@@ -22,7 +26,11 @@ import { EvaluationTypeModule } from 'src/modules/evaluation-type/evaluation-typ
     UniversityModule,
     DepartmentsModule,
     StudentsModule,
-    EvaluationTypeModule
+    EvaluationTypeModule,
+    CourseModule,
+    PrerequisiteModule,
+    ProfessorModule,
+    ScheduleModule
   ],
 })
 export class AppModule {}
