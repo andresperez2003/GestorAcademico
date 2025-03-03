@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config'; // 👈 Importa ConfigModule
 import { University } from '../modules/university/university.entity';
 import { UniversityModule } from '../modules/university/university.module';
 import { StudentsModule } from 'src/modules/students/students.module';
@@ -22,15 +23,16 @@ import { Enrollment } from 'src/modules/enrollment/enrollment.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }), // 👈 Habilita el uso de variables de entorno
     TypeOrmModule.forRoot({
-      type: 'mysql', 
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'andres1004367716',
-      database: 'academicmanager',
-      entities: [University, Department, Student, Evaluation, Course,Prerequisite, Professor, Schedule,Enrollment,Evaluation], 
-      autoLoadEntities: true,
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || '3306', 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [University, Department, Student, Evaluation, Course, Prerequisite, Professor, Schedule, Enrollment],
+      autoLoadEntities: true
     }),
     UniversityModule,
     DepartmentsModule,
@@ -41,7 +43,7 @@ import { Enrollment } from 'src/modules/enrollment/enrollment.entity';
     ProfessorModule,
     ScheduleModule,
     EnrollmentModule,
-    EvaluationModule
+    EvaluationModule,
   ],
 })
 export class AppModule {}
