@@ -1,5 +1,6 @@
+// university.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Department } from '../departments/department.entity';
+import { Department } from '../department/department.entity';
 
 @Entity()
 export class University {

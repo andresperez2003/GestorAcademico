@@ -1,3 +1,4 @@
+// dto/update-university.dto.ts
 import { IsString, Length } from 'class-validator';
 
 export class UpdateUniversityDto {

@@ -1,3 +1,4 @@
+// university.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { University } from './university.entity';

@@ -1,3 +1,4 @@
+// university.controller.ts
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { CreateUniversityDto } from './dto/create-university.dto';
