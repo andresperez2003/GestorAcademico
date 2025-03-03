@@ -5,9 +5,9 @@ import { Evaluation } from './evaluation.entity';
 import { EvaluationController } from './evaluation.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Evaluation])],
+  imports: [TypeOrmModule.forFeature([Evaluation])], // ✅ Importa el repositorio
   controllers: [EvaluationController],
   providers: [EvaluationService],
-  exports: [EvaluationService], 
+  exports: [EvaluationService, TypeOrmModule], // ✅ Exporta EvaluationRepository
 })
 export class EvaluationModule {}

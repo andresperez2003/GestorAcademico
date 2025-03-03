@@ -18,12 +18,12 @@ export class EnrollmentService {
         private readonly courseRepository: Repository<Course>,
         @InjectRepository(Prerequisite)
         private readonly prerequisiteRepository: Repository<Prerequisite>,
-        @InjectRepository(Evaluation)
-        private readonly evaluationRepository: Repository<Evaluation>,
+        @InjectRepository(Evaluation) // ✅ Inyectar correctamente el repositorio
+        private readonly evaluationRepository: Repository<Evaluation>
       ) {}
     
       async create(createEnrollmentDto: CreateEnrollmentDto) {
-          try {
+          
             const { studentId, courseId } = createEnrollmentDto;
 
             // Validar que el curso existe
@@ -33,20 +33,27 @@ export class EnrollmentService {
             }
 
             // Obtener los prerrequisitos del curso
-            const prerequisites = await this.prerequisiteRepository.find({ where: { course: { id: courseId } } });
+            const prerequisites = await this.prerequisiteRepository.find({
+              where: { course: { id: courseId } },
+              relations: ['prerequisite'], // 👈 Asegura que cargamos los datos del curso prerrequisito
+            });
+            
 
             if (prerequisites.length > 0) {
               // Obtener los cursos que el estudiante ha completado con nota > 0
               const passedCourses = await this.evaluationRepository
-                .createQueryBuilder('evaluation')
-                .leftJoin('evaluation.enrollment', 'enrollment')
-                .leftJoin('enrollment.course', 'course')
-                .where('enrollment.studentId = :studentId', { studentId })
-                .andWhere('evaluation.grade > 3') // Solo considerar cursos aprobados
-                .getMany();
+              .createQueryBuilder('evaluation')
+              .leftJoinAndSelect('evaluation.enrollment', 'enrollment')
+              .leftJoinAndSelect('enrollment.course', 'course')
+              .where('enrollment.studentId = :studentId', { studentId })
+              .andWhere('evaluation.grade > 3')
+              .getMany();
+            
 
-              const passedCourseIds = passedCourses.map(e => e.enrollment.course.id);
-
+              const passedCourseIds = passedCourses
+              .filter(e => e.enrollment && e.enrollment.course) // Evita errores
+              .map(e => e.enrollment.course.id);
+            
               // Verificar si ha completado los prerrequisitos con una nota válida
               for (const prereq of prerequisites) {
                 if (!passedCourseIds.includes(prereq.prerequisite.id)) {
@@ -60,9 +67,7 @@ export class EnrollmentService {
             // Crear la inscripción
             const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
             return await this.enrollmentRepository.save(enrollment);
-          } catch (error) {
-            throw new InternalServerErrorException('Error creating Enrollment');
-          }
+       
       }
     
       async findAll() {

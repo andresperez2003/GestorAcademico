@@ -11,16 +11,20 @@ export class Enrollment {
   @Column({ type: 'date' })
   enrollmentDate: Date;
 
-  // Relación con Student
   @ManyToOne(() => Student, student => student.enrollments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'studentId' })
   student: Student;
-
-  // Relación con Course
+  
+  @Column()
+  studentId: number;  // Esto puede ser redundante pero útil en algunos casos
+  
   @ManyToOne(() => Course, course => course.enrollments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'courseId' })
   course: Course;
-
+  
+  @Column()
+  courseId: number;
+  
   // Evaluaciones asociadas a la inscripción
   @OneToMany(() => Evaluation, evaluation => evaluation.enrollment)
   evaluations: Evaluation[];
