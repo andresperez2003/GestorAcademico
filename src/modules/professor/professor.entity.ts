@@ -1,6 +1,7 @@
 // professor.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Department } from '../department/department.entity';
+import { Course } from '../course/course.entity';
 
 @Entity()
 export class Professor {
@@ -12,6 +13,9 @@ export class Professor {
 
   @Column({ length: 100 })
   email: string;
+
+  @OneToMany(() => Course, course => course.professor, { cascade: true })
+  courses: Course[];
 
   @ManyToOne(() => Department, department => department.professors, { onDelete: 'CASCADE' })
   department: Department;
