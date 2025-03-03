@@ -1,17 +1,15 @@
-// dto/update-course.dto.ts
-import { IsString, Length, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class UpdateCourseDto {
-  @IsString()
-  @Length(1, 100)
   @IsOptional()
+  @IsString()
   name?: string;
 
-  @IsString()
-  @Length(1, 255)
   @IsOptional()
+  @IsString()
   description?: string;
 
   @IsOptional()
-  professorId?: number;
+  @IsString() // Asegura que professorId sea opcional y de tipo string
+  professorId?: string;
 }

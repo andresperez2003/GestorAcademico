@@ -11,5 +11,5 @@ export class CreateCourseDto {
   description: string;
 
   @IsOptional()
-  professorId?: number;
+  professorId?: string;
 }
