@@ -37,12 +37,37 @@ export class CourseService {
   }
   
 
-  findAll() {
-    return this.courseRepository.find({ relations: ['professor'] });
+  async findAll() {
+    const courses = await this.courseRepository.find({
+      relations: [
+        'professor',
+        'schedules',
+        'prerequisites',
+        'prerequisites.prerequisite',
+        'requiredBy',
+        'requiredBy.course',
+        'enrollments',
+        'enrollments.student'
+      ],
+    });
+  
+    return courses.map(course => ({
+      ...course,
+      prerequisites: course.prerequisites.map(pr => pr.prerequisite), // Extrae los detalles del curso prerrequisito
+    }));
   }
 
   findOne(id: number) {
-    return this.courseRepository.findOne({ where: { id }, relations: ['professor'] });
+    return this.courseRepository.findOne({ where: { id }, relations: [
+      'professor',
+      'schedules',
+      'prerequisites',
+      'prerequisites.prerequisite',
+      'requiredBy',
+      'requiredBy.course',
+      'enrollments',
+      'enrollments.student',
+    ] });
   }
 
   async update(id: number, updateCourseDto: UpdateCourseDto) {

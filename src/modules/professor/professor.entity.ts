@@ -1,5 +1,5 @@
 // professor.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Department } from '../department/department.entity';
 import { Course } from '../course/course.entity';
 
@@ -17,6 +17,8 @@ export class Professor {
   @OneToMany(() => Course, course => course.professor, { cascade: true })
   courses: Course[];
 
-  @ManyToOne(() => Department, department => department.professors, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Department, department => department.professors, { eager: true })
+  @JoinColumn({ name: 'departmentId' })
   department: Department;
+  
 }

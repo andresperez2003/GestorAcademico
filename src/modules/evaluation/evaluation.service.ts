@@ -4,22 +4,49 @@ import { Evaluation } from './evaluation.entity';
 import { Repository } from 'typeorm';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
+import { Enrollment } from '../enrollment/enrollment.entity';
+import { EvaluationType } from '../evaluation-type/evaluation-type.entity';
 
 @Injectable()
 export class EvaluationService {
       constructor(
         @InjectRepository(Evaluation)
         private readonly evaluationRepository: Repository<Evaluation>,
+        @InjectRepository(Evaluation)
+        private readonly enrollmentRepository: Repository<Enrollment>,
+        @InjectRepository(Evaluation)
+        private readonly evaluationTypeRepository: Repository<EvaluationType>,
       ) {}
     
       async create(createEvaluationDto: CreateEvaluationDto) {
-          try {
-            const enrollment = this.evaluationRepository.create(createEvaluationDto);
-            return await this.evaluationRepository.save(enrollment);
-          } catch (error) {
-            return new InternalServerErrorException('Error creating evaluation');
+        try {
+          const { enrollmentId, evaluationTypeId, ...evaluationData } = createEvaluationDto;
+      
+          // Buscar la inscripción (enrollment)
+          const enrollment = await this.enrollmentRepository.findOne({ where: { id: enrollmentId } });
+          if (!enrollment) {
+            throw new NotFoundException(`Enrollment with id ${enrollmentId} not found`);
           }
+      
+          // Buscar el tipo de evaluación (evaluationType)
+          const evaluationType = await this.evaluationTypeRepository.findOne({ where: { id: evaluationTypeId } });
+          if (!evaluationType) {
+            throw new NotFoundException(`EvaluationType with id ${evaluationTypeId} not found`);
+          }
+      
+          // Crear la evaluación asignando las relaciones correctamente
+          const evaluation = this.evaluationRepository.create({
+            ...evaluationData,
+            enrollment,
+            evaluationType,
+          });
+      
+          return await this.evaluationRepository.save(evaluation);
+        } catch (error) {
+          throw new InternalServerErrorException('Error creating evaluation');
+        }
       }
+      
     
       async findAll() {
         return await this.evaluationRepository.find({

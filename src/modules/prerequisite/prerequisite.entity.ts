@@ -7,10 +7,10 @@ export class Prerequisite {
   id: number;
 
   @ManyToOne(() => Course, (course) => course.prerequisites, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'courseToTake' }) // 👈 Asegura que este nombre coincide con la base de datos
+  @JoinColumn({ name: 'courseToTake' })
   course: Course;
 
   @ManyToOne(() => Course, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'prerequisiteCourse' }) // 👈 Este es el curso que es prerrequisito
+  @JoinColumn({ name: 'prerequisiteCourse' }) 
   prerequisite: Course;
 }
