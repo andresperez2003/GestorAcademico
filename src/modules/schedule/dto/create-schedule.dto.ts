@@ -1,3 +1,4 @@
+// src/modules/schedule/dto/create-schedule.dto.ts
 import { IsString, IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateScheduleDto {
