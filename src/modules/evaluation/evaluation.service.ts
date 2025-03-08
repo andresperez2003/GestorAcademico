@@ -12,9 +12,9 @@ export class EvaluationService {
       constructor(
         @InjectRepository(Evaluation)
         private readonly evaluationRepository: Repository<Evaluation>,
-        @InjectRepository(Evaluation)
+        @InjectRepository(Enrollment)
         private readonly enrollmentRepository: Repository<Enrollment>,
-        @InjectRepository(Evaluation)
+        @InjectRepository(EvaluationType)
         private readonly evaluationTypeRepository: Repository<EvaluationType>,
       ) {}
     
@@ -43,7 +43,7 @@ export class EvaluationService {
       
           return await this.evaluationRepository.save(evaluation);
         } catch (error) {
-          throw new InternalServerErrorException('Error creating evaluation');
+          throw new InternalServerErrorException('Error creating evaluation'+ error);
         }
       }
       
@@ -67,14 +67,48 @@ export class EvaluationService {
     
       async update(id: number, updateEvaluationDto: UpdateEvaluationDto) {
         try {
-          const enrollment = await this.evaluationRepository.findOne({ where: { id } });
-          if (!enrollment) {
-              return new NotFoundException(`Evaluation with id ${id} not found`);
+          const evaluation = await this.evaluationRepository.findOne({ 
+            where: { id },
+            relations: ['enrollment', 'evaluationType']
+          });
+          
+          if (!evaluation) {  
+            throw new NotFoundException(`Evaluation with id ${id} not found`);
           }
-          await this.evaluationRepository.update(id, updateEvaluationDto);
-          return this.findOne(id);
+
+          // Si se proporciona un nuevo enrollmentId, buscar el enrollment
+          if (updateEvaluationDto.enrollmentId) {
+            const enrollment = await this.enrollmentRepository.findOne({ 
+              where: { id: updateEvaluationDto.enrollmentId } 
+            });
+            if (!enrollment) {
+              throw new NotFoundException(`Enrollment with id ${updateEvaluationDto.enrollmentId} not found`);
+            }
+            evaluation.enrollment = enrollment;
+          }
+
+          // Si se proporciona un nuevo evaluationTypeId, buscar el evaluationType
+          if (updateEvaluationDto.evaluationTypeId) {
+            const evaluationType = await this.evaluationTypeRepository.findOne({ 
+              where: { id: updateEvaluationDto.evaluationTypeId } 
+            });
+            if (!evaluationType) {
+              throw new NotFoundException(`EvaluationType with id ${updateEvaluationDto.evaluationTypeId} not found`);
+            }
+            evaluation.evaluationType = evaluationType;
+          }
+
+          // Actualizar los demás campos
+          Object.assign(evaluation, updateEvaluationDto);
+          
+          // Guardar los cambios
+          const updatedEvaluation = await this.evaluationRepository.save(evaluation);
+          return updatedEvaluation;
         } catch (error) {
-            return new InternalServerErrorException('Error updating evaluation');
+          if (error instanceof NotFoundException) {
+            throw error;
+          }
+          throw new InternalServerErrorException('Error updating evaluation');
         }
       }
         
