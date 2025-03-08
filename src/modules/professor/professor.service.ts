@@ -38,31 +38,46 @@ export class ProfessorService {
   
 
   findAll() {
-    return this.professorRepository.find({ relations: ['department'] });
+    return this.professorRepository.find({ relations: ['department','courses'] });
   }
 
   findOne(id: string) {
-    return this.professorRepository.findOne({ where: { identification:id }, relations: ['department'] });
+    return this.professorRepository.findOne({ where: { identification:id }, relations: ['department','courses'] });
   }
 
   async update(id: string, updateProfessorDto: UpdateProfessorDto) {
     const { departmentId, ...professorData } = updateProfessorDto;
   
-    let department = undefined;
-      const foundDepartment = await this.departmentRepository.findOne({ where: { id: departmentId } });
-      if (!foundDepartment) {
-      if (!department) {
-        throw new NotFoundException(`Department with id ${departmentId} not found`);
-      }
+    // Buscar el profesor existente con relaciones
+    const professor = await this.professorRepository.findOne({
+      where: { identification: id },
+      relations: ['department', 'courses'],
+    });
+  
+    if (!professor) {
+      throw new NotFoundException(`Professor with ID ${id} not found`);
     }
   
-    await this.professorRepository.update(
-      { identification: id },
-      { ...professorData, department }
-    );
+    // Manejar la relación con Department
+    if (departmentId) {
+      const foundDepartment = await this.departmentRepository.findOne({
+        where: { id: departmentId },
+      });
   
-    return this.findOne(id);
+      if (!foundDepartment) {
+        throw new NotFoundException(`Department with ID ${departmentId} not found`);
+      }
+  
+      professor.department = foundDepartment;
+    }
+  
+    // Manejar datos del profesor (sin courses)
+    Object.assign(professor, professorData);
+  
+    // Guardar cambios
+    return await this.professorRepository.save(professor);
   }
+  
   
   async remove(id: string) {
     await this.professorRepository.delete({identification:id});

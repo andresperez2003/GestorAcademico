@@ -14,6 +14,7 @@ export class EvaluationTypeService {
     
     async create(createEvaluationTypeDto: CreateEvaluationTypeDto) {
         try {
+            console.log(createEvaluationTypeDto);
             const student = this.evaluationTypeRespository.create(createEvaluationTypeDto);
             return await this.evaluationTypeRespository.save(student);
         } catch (error) {
@@ -26,11 +27,11 @@ export class EvaluationTypeService {
     }
     
     async findOne(id: number) {
-        const evluationType = await this.evaluationTypeRespository.findOne({ where: { id } });
-        if (!evluationType) {
-            return new NotFoundException(`Evaluation type with id ${id} not found`);
+        const evaluationType = await this.evaluationTypeRespository.findOne({ where: { id } });
+        if (!evaluationType) {
+            throw new NotFoundException(`Evaluation type with id ${id} not found`);
         }
-        return evluationType; 
+        return evaluationType; 
     }
     
     async update(id: number, updateEvaluationTypeDto: UpdateEvaluationTypeDto) {
@@ -47,12 +48,12 @@ export class EvaluationTypeService {
     }
       
     async remove(id: number) {
-        const student = await this.evaluationTypeRespository.findOne({ where: { id } });
-        if (!student) {
-            return new NotFoundException(`Evaluation type with id ${id} not found`);
+        const evaluationType = await this.evaluationTypeRespository.findOne({ where: { id } });
+        if (!evaluationType) {
+            throw new NotFoundException(`Evaluation type with id ${id} not found`);
         }
-          await this.evaluationTypeRespository.delete(id);
-          return { message: 'Evaluation type deleted successfully' };
+        await this.evaluationTypeRespository.delete(id);
+        return { message: 'Evaluation type deleted successfully' };
     }
 
 }

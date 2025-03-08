@@ -14,13 +14,31 @@ export class DepartmentsService {
   ) {}
 
   async create(createDepartmentDto: CreateDepartmentDto) {
-      try {
-        const university = this.departmentRepository.create(createDepartmentDto);
-        return await this.departmentRepository.save(university);
-      } catch (error) {
-        return new InternalServerErrorException('Error creating department');
+    try {
+      console.log(createDepartmentDto); // Asegúrate de que universityId está aquí
+  
+      const university = await this.departmentRepository.findOne({
+        where: { id: createDepartmentDto.universityId },
+      });
+  
+      if (!university) {
+        throw new NotFoundException('University not found');
       }
+  
+      const department = this.departmentRepository.create({
+        ...createDepartmentDto,
+        university, // Aquí asignamos la entidad en lugar del ID
+      });
+  
+      console.log(department);
+      
+      return await this.departmentRepository.save(department);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Error creating department');
+    }
   }
+  
 
   async findAll() {
     return await this.departmentRepository.find({ relations: ['university'] });

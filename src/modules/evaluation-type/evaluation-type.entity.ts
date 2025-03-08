@@ -14,5 +14,4 @@ export class EvaluationType {
 
   @OneToMany(() => Evaluation, evaluation => evaluation.evaluationType)
   evaluations: Evaluation[];
-
 }

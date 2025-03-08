@@ -89,7 +89,7 @@ export class EnrollmentService {
   
   async findOne(id: number) {
     const enrollment = await this.enrollmentRepository.findOne({ 
-      where: { id }, 
+      where: { id  }, 
       relations: ['student', 'course', 'evaluations'] 
     });
   
@@ -104,15 +104,45 @@ export class EnrollmentService {
   async update(id: number, updateEnrollmentDto: UpdateEnrollmentDto) {
     try {
       const enrollment = await this.enrollmentRepository.findOne({ where: { id } });
+  
       if (!enrollment) {
         throw new NotFoundException(`Enrollment with id ${id} not found`);
       }
-      await this.enrollmentRepository.update(id, updateEnrollmentDto);
+  
+      // Cargar entidades relacionadas si existen en updateEnrollmentDto
+      let student: Student | null = null;
+      let course: Course | null = null;
+  
+      if (updateEnrollmentDto.studentId) {
+        student = await this.studentRepository.findOne({ where: { identification: String(updateEnrollmentDto.studentId) } });
+        if (!student) {
+          throw new NotFoundException(`Student with id ${updateEnrollmentDto.studentId} not found`);
+        }
+      }
+  
+      if (updateEnrollmentDto.courseId) {
+        course = await this.courseRepository.findOne({ where: { id: updateEnrollmentDto.courseId } });
+        if (!course) {
+          throw new NotFoundException(`Course with id ${updateEnrollmentDto.courseId} not found`);
+        }
+      }
+  
+      // Crear el objeto de actualización con entidades correctas
+      const updatedEnrollment = {
+        ...updateEnrollmentDto,
+        student: student ?? enrollment.student, // Mantiene la anterior si no se actualiza
+        course: course ?? enrollment.course,
+      };
+  
+      await this.enrollmentRepository.save({ id, ...updatedEnrollment });
+  
       return this.findOne(id);
     } catch (error) {
+      console.error(error);
       throw new InternalServerErrorException('Error updating enrollment');
     }
   }
+  
 
   async remove(id: number) {
     const enrollment = await this.enrollmentRepository.findOne({ where: { id } });

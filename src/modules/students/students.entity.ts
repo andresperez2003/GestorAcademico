@@ -3,16 +3,16 @@ import { Enrollment } from '../enrollment/enrollment.entity';
 
 @Entity()
 export class Student {
-  @PrimaryColumn({ length: 20 })
+  @PrimaryColumn({ length: 20 })  // Clave primaria
   identification: string;
 
-  @Column({ length: 30 })
+  @Column({ length: 30 })  // Coincide con VARCHAR(30)
   firstName: string;
 
-  @Column({ length: 30 })
+  @Column({ length: 30 })  // Coincide con VARCHAR(30)
   lastName: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date' })  // Coincide con DATE
   birthDate: Date;
 
   @OneToMany(() => Enrollment, enrollment => enrollment.student)

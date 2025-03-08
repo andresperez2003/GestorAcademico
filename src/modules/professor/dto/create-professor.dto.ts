@@ -1,20 +1,21 @@
-// dto/create-professor.dto.ts
-import { IsString, IsEmail, Length, IsNumber } from 'class-validator';
-import { PrimaryColumn } from 'typeorm';
+import { IsString, Length, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateProfessorDto {
-  @PrimaryColumn({ length: 20 })
   @IsString()
-  identification?: string;
+  @IsNotEmpty({ message: "El campo identification es obligatorio" })
+  identification: string;
 
   @IsString()
   @Length(1, 100)
-  firstName?: string;
+  @IsNotEmpty({ message: "El campo firstName es obligatorio" })
+  firstName: string;
 
   @IsString()
   @Length(1, 100)
-  lastName?: string;
+  @IsNotEmpty({ message: "El campo lastName es obligatorio" })
+  lastName: string;
 
-  @IsNumber()
+  @IsOptional()
+  @IsNumber({}, { message: "departmentId debe ser un número válido" })
   departmentId?: number;
 }
