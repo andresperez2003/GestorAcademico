@@ -15,8 +15,8 @@ export class EvaluationTypeService {
     async create(createEvaluationTypeDto: CreateEvaluationTypeDto) {
         try {
             console.log(createEvaluationTypeDto);
-            const student = this.evaluationTypeRespository.create(createEvaluationTypeDto);
-            return await this.evaluationTypeRespository.save(student);
+            const evaluationType = this.evaluationTypeRespository.create(createEvaluationTypeDto);
+            return await this.evaluationTypeRespository.save(evaluationType);
         } catch (error) {
             return new InternalServerErrorException('Error creating evaluation type');
         }

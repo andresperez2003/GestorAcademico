@@ -9,9 +9,6 @@ export class EvaluationType {
   @Column({ length: 30 })
   name: string;
 
-  @Column({ type: 'float' })
-  percentage: number;
-
   @OneToMany(() => Evaluation, evaluation => evaluation.evaluationType)
   evaluations: Evaluation[];
 }

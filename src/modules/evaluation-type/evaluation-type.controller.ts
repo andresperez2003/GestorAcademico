@@ -11,9 +11,7 @@ export class EvaluationTypeController {
     @Post()
     create(@Body() createEvaluationTypeDto: CreateEvaluationTypeDto) {
         let createEvaluationTypeDto2 = createEvaluationTypeDto["body"];
-        //console.log(createEvaluationTypeDto2);
-
-        
+        console.log(createEvaluationTypeDto2);
     return this.evaluationTypeService.create(createEvaluationTypeDto2);
     }
 
