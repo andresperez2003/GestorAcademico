@@ -16,19 +16,41 @@ export class ProfessorService {
     private readonly departmentRepository: Repository<Department>,
   ) {}
 
+  private async generateProfessorId(): Promise<string> {
+    // Obtener todos los IDs de profesores existentes
+    const professors = await this.professorRepository.find({
+      select: ['identification'],
+      order: { identification: 'DESC' },
+    });
+
+    if (professors.length === 0) {
+      return 'P001'; // Primer profesor
+    }
+
+    // Obtener el último ID y generar el siguiente
+    const lastId = professors[0].identification;
+    const numericPart = parseInt(lastId.substring(1));
+    const nextNumericPart = numericPart + 1;
+    return `P${nextNumericPart.toString().padStart(3, '0')}`;
+  }
+
   async create(createProfessorDto: CreateProfessorDto) {
-    const { departmentId, ...professorData } = createProfessorDto;
+    const { departmentId, identification, ...professorData } = createProfessorDto;
   
     let department: Department | null = null;
     if (departmentId) {
       const foundDepartment = await this.departmentRepository.findOne({ where: { id: departmentId } });
       if (!foundDepartment) {
-        return new NotFoundException(`Department with id ${departmentId} not found`);
+        throw new NotFoundException(`Department with id ${departmentId} not found`);
       }
       department = foundDepartment;
     }
+
+    // Generar ID automáticamente
+    const generatedId = await this.generateProfessorId();
   
     const professor = this.professorRepository.create({
+      identification: generatedId,
       ...professorData,
       department: department || undefined,
     });

@@ -1,8 +1,9 @@
-import { IsString, IsDate } from 'class-validator';
+import { IsString, IsDate, IsOptional } from 'class-validator';
 
 export class CreateStudentDto {
+  @IsOptional()
   @IsString()
-  identification: string;
+  identification?: string;
 
   @IsString()
   firstName: string;

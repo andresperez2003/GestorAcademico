@@ -1,5 +1,6 @@
 // professor.entity.ts
 import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Department } from '../department/department.entity';
 import { Course } from '../course/course.entity';
 
