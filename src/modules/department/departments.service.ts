@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Servicio de Gestión de Departamentos
+ * @description Este servicio maneja todas las operaciones relacionadas con los departamentos,
+ * incluyendo la creación, consulta, actualización y eliminación de departamentos.
+ * También maneja las relaciones con universidades y profesores.
+ * 
+ * @module DepartmentsService
+ */
+
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from './department.entity';
@@ -13,6 +22,13 @@ export class DepartmentsService {
     private readonly departmentRepository: Repository<Department>,
   ) {}
 
+  /**
+   * Crea un nuevo departamento en el sistema
+   * @param createDepartmentDto - DTO con los datos del departamento a crear
+   * @returns Promise<Department> El departamento creado
+   * @throws NotFoundException si la universidad especificada no existe
+   * @throws InternalServerErrorException si hay un error al crear el departamento
+   */
   async create(createDepartmentDto: CreateDepartmentDto) {
     try {
       console.log(createDepartmentDto); // Asegúrate de que universityId está aquí
@@ -40,10 +56,20 @@ export class DepartmentsService {
   }
   
 
+  /**
+   * Obtiene todos los departamentos con sus relaciones
+   * @returns Promise<Department[]> Lista de departamentos con sus universidades
+   */
   async findAll() {
     return await this.departmentRepository.find({ relations: ['university'] });
   }
 
+  /**
+   * Busca un departamento por su ID
+   * @param id - Identificador del departamento
+   * @returns Promise<Department> El departamento encontrado
+   * @throws NotFoundException si el departamento no existe
+   */
   async findOne(id: number) {
     const department = await this.departmentRepository.findOne({ where: { id } });
     if (!department) {
@@ -52,19 +78,33 @@ export class DepartmentsService {
     return department;
   }
 
-  async update(id: number, updateUniversityDto: UpdateDepartmentDto) {
+  /**
+   * Actualiza los datos de un departamento existente
+   * @param id - Identificador del departamento a actualizar
+   * @param updateDepartmentDto - DTO con los datos a actualizar
+   * @returns Promise<Department> El departamento actualizado
+   * @throws NotFoundException si el departamento no existe
+   * @throws InternalServerErrorException si hay un error al actualizar
+   */
+  async update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
     try {
       const department = await this.departmentRepository.findOne({ where: { id } });
       if (!department) {
           return new NotFoundException(`Department with id ${id} not found`);
       }
-      await this.departmentRepository.update(id, updateUniversityDto);
+      await this.departmentRepository.update(id, updateDepartmentDto);
       return this.findOne(id);
     } catch (error) {
         return new InternalServerErrorException('Error updating department');
     }
   }
     
+  /**
+   * Elimina un departamento del sistema
+   * @param id - Identificador del departamento a eliminar
+   * @returns Promise<{message: string}> Mensaje de confirmación
+   * @throws NotFoundException si el departamento no existe
+   */
   async remove(id: number) {
     const department = await this.departmentRepository.findOne({ where: { id } });
     if (!department) {

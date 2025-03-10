@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Servicio de Matrículas
+ * @description Gestiona todas las operaciones relacionadas con las matrículas de estudiantes en cursos.
+ * Incluye la creación, consulta, actualización y eliminación de matrículas, así como la validación
+ * de prerrequisitos y el manejo de relaciones con estudiantes y cursos.
+ * 
+ * @module EnrollmentService
+ */
+
 import { Injectable, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +20,14 @@ import { Student } from '../students/students.entity';
 
 @Injectable()
 export class EnrollmentService {
-
+  /**
+   * Constructor del servicio de matrículas
+   * @param enrollmentRepository - Repositorio para operaciones con matrículas
+   * @param courseRepository - Repositorio para operaciones con cursos
+   * @param studentRepository - Repositorio para operaciones con estudiantes
+   * @param prerequisiteRepository - Repositorio para operaciones con prerrequisitos
+   * @param evaluationRepository - Repositorio para operaciones con evaluaciones
+   */
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
@@ -25,6 +41,13 @@ export class EnrollmentService {
     private readonly evaluationRepository: Repository<Evaluation>,
   ) {}
 
+  /**
+   * Crea una nueva matrícula
+   * @param createEnrollmentDto - DTO con los datos de la matrícula a crear
+   * @returns La matrícula creada
+   * @throws {NotFoundException} Si el curso o estudiante no existen
+   * @throws {BadRequestException} Si no se cumplen los prerrequisitos del curso
+   */
   async create(createEnrollmentDto: CreateEnrollmentDto) {
     const { studentId, courseId } = createEnrollmentDto;
 
@@ -83,10 +106,20 @@ export class EnrollmentService {
     return await this.enrollmentRepository.save(enrollment);
   }
 
+  /**
+   * Obtiene todas las matrículas del sistema
+   * @returns Lista de matrículas con sus relaciones (estudiante, curso y evaluaciones)
+   */
   async findAll() {
     return await this.enrollmentRepository.find({ relations: ['student', 'course', 'evaluations'] });
   }
   
+  /**
+   * Obtiene una matrícula específica por su ID
+   * @param id - ID de la matrícula a buscar
+   * @returns La matrícula encontrada con sus relaciones
+   * @throws {NotFoundException} Si la matrícula no existe
+   */
   async findOne(id: number) {
     const enrollment = await this.enrollmentRepository.findOne({ 
       where: { id  }, 
@@ -100,7 +133,14 @@ export class EnrollmentService {
     return enrollment;
   }
   
-
+  /**
+   * Actualiza una matrícula existente
+   * @param id - ID de la matrícula a actualizar
+   * @param updateEnrollmentDto - DTO con los datos a actualizar
+   * @returns La matrícula actualizada
+   * @throws {NotFoundException} Si la matrícula, curso o estudiante no existen
+   * @throws {InternalServerErrorException} Si hay un error durante la actualización
+   */
   async update(id: number, updateEnrollmentDto: UpdateEnrollmentDto) {
     try {
       const enrollment = await this.enrollmentRepository.findOne({ where: { id } });
@@ -143,7 +183,12 @@ export class EnrollmentService {
     }
   }
   
-
+  /**
+   * Elimina una matrícula
+   * @param id - ID de la matrícula a eliminar
+   * @returns Mensaje de confirmación
+   * @throws {NotFoundException} Si la matrícula no existe
+   */
   async remove(id: number) {
     const enrollment = await this.enrollmentRepository.findOne({ where: { id } });
     if (!enrollment) {

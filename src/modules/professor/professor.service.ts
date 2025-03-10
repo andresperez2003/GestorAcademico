@@ -1,4 +1,12 @@
-// professor.service.ts
+/**
+ * @fileoverview Servicio de Gestión de Profesores
+ * @description Este servicio maneja todas las operaciones relacionadas con los profesores,
+ * incluyendo la creación, consulta, actualización y eliminación de registros de profesores.
+ * También maneja la generación automática de IDs y las relaciones con departamentos y cursos.
+ * 
+ * @module ProfessorService
+ */
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,6 +24,11 @@ export class ProfessorService {
     private readonly departmentRepository: Repository<Department>,
   ) {}
 
+  /**
+   * Genera un ID único para un nuevo profesor
+   * @returns Promise<string> ID generado en formato 'P001', 'P002', etc.
+   * @private
+   */
   private async generateProfessorId(): Promise<string> {
     // Obtener todos los IDs de profesores existentes
     const professors = await this.professorRepository.find({
@@ -34,6 +47,12 @@ export class ProfessorService {
     return `P${nextNumericPart.toString().padStart(3, '0')}`;
   }
 
+  /**
+   * Crea un nuevo profesor en el sistema
+   * @param createProfessorDto - DTO con los datos del profesor a crear
+   * @returns Promise<Professor> El profesor creado
+   * @throws NotFoundException si el departamento especificado no existe
+   */
   async create(createProfessorDto: CreateProfessorDto) {
     const { departmentId, identification, ...professorData } = createProfessorDto;
   
@@ -59,14 +78,30 @@ export class ProfessorService {
   }
   
 
+  /**
+   * Obtiene todos los profesores con sus relaciones (departamento y cursos)
+   * @returns Promise<Professor[]> Lista de profesores con sus relaciones
+   */
   findAll() {
     return this.professorRepository.find({ relations: ['department','courses'] });
   }
 
+  /**
+   * Busca un profesor por su ID
+   * @param id - Identificación del profesor
+   * @returns Promise<Professor> El profesor encontrado con sus relaciones
+   */
   findOne(id: string) {
     return this.professorRepository.findOne({ where: { identification:id }, relations: ['department','courses'] });
   }
 
+  /**
+   * Actualiza los datos de un profesor existente
+   * @param id - Identificación del profesor a actualizar
+   * @param updateProfessorDto - DTO con los datos a actualizar
+   * @returns Promise<Professor> El profesor actualizado
+   * @throws NotFoundException si el profesor o el departamento no existen
+   */
   async update(id: string, updateProfessorDto: UpdateProfessorDto) {
     const { departmentId, ...professorData } = updateProfessorDto;
   
@@ -101,6 +136,11 @@ export class ProfessorService {
   }
   
   
+  /**
+   * Elimina un profesor del sistema
+   * @param id - Identificación del profesor a eliminar
+   * @returns Promise<{message: string}> Mensaje de confirmación
+   */
   async remove(id: string) {
     await this.professorRepository.delete({identification:id});
     return { message: 'Professor deleted successfully' };

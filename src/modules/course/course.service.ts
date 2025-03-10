@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Servicio de Gestión de Cursos
+ * @description Este servicio maneja todas las operaciones relacionadas con los cursos,
+ * incluyendo la creación, consulta, actualización y eliminación de cursos.
+ * También maneja las relaciones con profesores, prerrequisitos y matrículas.
+ * 
+ * @module CourseService
+ */
+
 // course.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,6 +25,12 @@ export class CourseService {
     private readonly professorRepository: Repository<Professor>,
   ) {}
 
+  /**
+   * Crea un nuevo curso en el sistema
+   * @param createCourseDto - DTO con los datos del curso a crear
+   * @returns Promise<Course> El curso creado
+   * @throws NotFoundException si el profesor especificado no existe
+   */
   async create(createCourseDto: CreateCourseDto) {
     const { professorId, ...courseData } = createCourseDto;
   
@@ -37,6 +52,11 @@ export class CourseService {
   }
   
 
+  /**
+   * Obtiene todos los cursos con sus relaciones completas
+   * @returns Promise<Course[]> Lista de cursos con todas sus relaciones
+   * Las relaciones incluyen: profesor, horarios, prerrequisitos y matrículas
+   */
   async findAll() {
     const courses = await this.courseRepository.find({
       relations: [
@@ -57,6 +77,11 @@ export class CourseService {
     }));
   }
 
+  /**
+   * Busca un curso por su ID
+   * @param id - Identificador del curso
+   * @returns Promise<Course> El curso encontrado con todas sus relaciones
+   */
   findOne(id: number) {
     return this.courseRepository.findOne({ where: { id }, relations: [
       'professor',
@@ -70,6 +95,13 @@ export class CourseService {
     ] });
   }
 
+  /**
+   * Actualiza los datos de un curso existente
+   * @param id - Identificador del curso a actualizar
+   * @param updateCourseDto - DTO con los datos a actualizar
+   * @returns Promise<Course> El curso actualizado con sus relaciones
+   * @throws NotFoundException si el curso o el profesor no existen
+   */
   async update(id: number, updateCourseDto: UpdateCourseDto) {
     const { professorId, ...courseData } = updateCourseDto;
   
@@ -94,6 +126,11 @@ export class CourseService {
   }
   
 
+  /**
+   * Elimina un curso del sistema
+   * @param id - Identificador del curso a eliminar
+   * @returns Promise<{message: string}> Mensaje de confirmación
+   */
   async remove(id: number) {
     await this.courseRepository.delete(id);
     return { message: 'Course deleted successfully' };
