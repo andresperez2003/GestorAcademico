@@ -13,9 +13,36 @@ export class StudentsService {
         private readonly studentRepository: Repository<Student>,
     ) {}
 
+    private async generateStudentId(): Promise<string> {
+        // Obtener todos los IDs de estudiantes existentes
+        const students = await this.studentRepository.find({
+            select: ['identification'],
+            order: { identification: 'DESC' },
+        });
+
+        if (students.length === 0) {
+            return 'S001'; // Primer estudiante
+        }
+
+        // Obtener el último ID y generar el siguiente
+        const lastId = students[0].identification;
+        const numericPart = parseInt(lastId.substring(1));
+        const nextNumericPart = numericPart + 1;
+        return `S${nextNumericPart.toString().padStart(3, '0')}`;
+    }
+
     async create(createStudentDto: CreateStudentDto) {
         try {
-            const student = this.studentRepository.create(createStudentDto);
+            const { identification, ...studentData } = createStudentDto;
+            
+            // Generar ID automáticamente
+            const generatedId = await this.generateStudentId();
+            
+            const student = this.studentRepository.create({
+                identification: generatedId,
+                ...studentData
+            });
+            
             return await this.studentRepository.save(student);
         } catch (error) {
             throw new InternalServerErrorException('Error creating student');

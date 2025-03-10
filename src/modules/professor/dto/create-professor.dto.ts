@@ -2,7 +2,7 @@ import { IsString, Length, IsNumber, IsNotEmpty, IsOptional } from 'class-valida
 
 export class CreateProfessorDto {
   @IsString()
-  @IsNotEmpty({ message: "El campo identification es obligatorio" })
+  @IsOptional()
   identification: string;
 
   @IsString()

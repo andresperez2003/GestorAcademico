@@ -1,11 +1,11 @@
 // professor.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Department } from '../department/department.entity';
 import { Course } from '../course/course.entity';
 
 @Entity()
 export class Professor {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ length: 10 })
   identification: string;
 
   @Column({ length: 100 })
@@ -20,5 +20,4 @@ export class Professor {
   @ManyToOne(() => Department, department => department.professors, { eager: true })
   @JoinColumn({ name: 'departmentId' })
   department: Department;
-  
 }
