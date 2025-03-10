@@ -1,0 +1,104 @@
+# Development docker-compose file
+# This file will run the app in development mode
+# ${} are environment variables that will be replaced
+# with the values in the .env file
+services:
+  # App service
+  # This service will run the application
+  app:
+    # Image to use
+    # Change <app name> with the name of the app
+    image: img-gestor_academico-dev:latest
+
+    # Environment file to use
+    env_file:
+      - ./dev.env
+
+    # Environment variables
+    environment:
+      NODE_ENV: ${NODE_ENV}
+
+    # Container name
+    # Used to identify the container
+    # Also to communicate with other containers
+    container_name: ${HOST_NAME}
+
+    # Build the app using the previously created
+    # Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    # Volume to mount the source code
+    # This will allow the app to be updated
+    # without the need to rebuild the container
+    volumes:
+      - ./src:/app/src
+
+    # Port forwarding:
+    # This will allow the app to be accessed from
+    # the host machine.
+    # Change <host port> with the port that the app
+    # will use in the host machine
+    ports:
+      - "3000:${PORT}"
+
+    depends_on:
+      db:
+        # Execute the healthcheck of the db service
+        condition: service_healthy
+
+  db:
+    # Image to use (MySQL)
+    # You can use another image, Search them in:
+    # https://hub.docker.com/
+    image: mysql
+
+    # File with the environment variables
+    env_file:
+      - ./dev.env
+
+    # Container name
+    # Used to identify the container
+    # Also to communicate with other containers
+    container_name: ${DB_HOST_NAME}
+
+    # Restart policy
+    # This will restart the container if it stops
+    # unexpectedly
+    restart: always
+
+    # Environment variables
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+
+    # Healthcheck
+    # This will check if the container is healthy (Listening to the port)
+    # If not, it will restart the containers that
+    # depends on it
+    healthcheck:
+      test: [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-uroot',
+          '-p${DATABASE_ROOT_PASSWORD}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    volumes:
+      # Replace <app name> with the name of the app
+      - gestor_academico-db_data:/var/lib/mysql
+
+volumes:
+  # Volume for the database
+  # Replace <app name> with the name of the app
+  gestor_academico-db_data:
+    driver: local

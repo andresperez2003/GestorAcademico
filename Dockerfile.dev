@@ -1,0 +1,28 @@
+# Specify the image to build the container.
+# This image is NodeJS based.
+# More images at: https://hub.docker.com/_/node
+# Change <version> with a nodejs valid version
+# Use SemVer format: https://semver.org/
+FROM node:20-alpine
+
+# Set as main working directory
+WORKDIR /app
+
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Copy the package.json file to the container and
+# install the dependencies
+COPY package.json .
+RUN npm install
+
+# Copy the source code to the container
+COPY . .
+
+# Expose the port that the app will use
+# Change <port> with the port that the app will use
+# Just documentation
+EXPOSE 3000
+
+# Run the app
+CMD ["npm", "run", "start:dev"]

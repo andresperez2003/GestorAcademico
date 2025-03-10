@@ -2,96 +2,90 @@ CREATE DATABASE IF NOT EXISTS AcademicManager;
 
 USE AcademicManager;
 
-CREATE TABLE User (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE University(
+CREATE TABLE university (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50)
 );
 
-CREATE TABLE Department(
+CREATE TABLE department (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50),
     universityId INT,
-    FOREIGN KEY (universityId) REFERENCES University(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (universityId) REFERENCES university(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Professor(
+CREATE TABLE professor (
     identification VARCHAR(20) PRIMARY KEY,
     firstName VARCHAR(30),
     lastName VARCHAR(30),
     departmentId INT,
-    FOREIGN KEY (departmentId) REFERENCES Department(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (departmentId) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Course(
+CREATE TABLE course (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(30),
     description VARCHAR(100),
     professorId VARCHAR(20),
-    FOREIGN KEY (professorId) REFERENCES Professor(identification) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (professorId) REFERENCES professor(identification) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Prerequisite(
+CREATE TABLE prerequisite (
     id INT PRIMARY KEY AUTO_INCREMENT,
     courseToTake INT,
     prerequisiteCourse INT,
-    FOREIGN KEY (courseToTake) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (prerequisiteCourse) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (courseToTake) REFERENCES course(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (prerequisiteCourse) REFERENCES course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Student(
+CREATE TABLE student (
     identification VARCHAR(20) PRIMARY KEY,
     firstName VARCHAR(30),
     lastName VARCHAR(30),
     birthDate DATE
 );
 
-CREATE TABLE Enrollment(
+CREATE TABLE enrollment (
     id INT PRIMARY KEY AUTO_INCREMENT,
     enrollmentDate DATE,
     studentId VARCHAR(20),
     courseId INT,
-    FOREIGN KEY (studentId) REFERENCES Student(identification) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (studentId) REFERENCES student(identification) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (courseId) REFERENCES course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE EvaluationType(
+CREATE TABLE evaluationType (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(30)
 );
 
-CREATE TABLE Evaluation(
+CREATE TABLE evaluation (
     id INT PRIMARY KEY AUTO_INCREMENT,
     evaluationDate DATE,
     grade FLOAT,
     evaluationTypeId INT,
     enrollmentId INT,
-    FOREIGN KEY (evaluationTypeId) REFERENCES EvaluationType(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (enrollmentId) REFERENCES Enrollment(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (evaluationTypeId) REFERENCES evaluationType(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (enrollmentId) REFERENCES enrollment(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Schedule(
+CREATE TABLE schedule (
     id INT PRIMARY KEY AUTO_INCREMENT,
     startTime TIME,
     endTime TIME,
     dayOfWeek VARCHAR(10),
     courseId INT,
-    FOREIGN KEY (courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (courseId) REFERENCES course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-INSERT INTO University (name) VALUES ('Autonomous University of Manizales');
+INSERT INTO university (name) VALUES ('Autonomous University of Manizales');
 
-INSERT INTO Department (name, universityId) VALUES 
+INSERT INTO department (name, universityId) VALUES 
 ('Computer Science', 1),
 ('Physics and Mathematics', 1),
 ('Electronics', 1);
 
-INSERT INTO Professor (identification, firstName, lastName, departmentId) VALUES 
+INSERT INTO professor (identification, firstName, lastName, departmentId) VALUES 
 ('P001', 'Javier', 'Hernandez', 1),
 ('P002', 'Miguel', 'Castro', 1),
 ('P003', 'Laura', 'Gomez', 1),
@@ -102,7 +96,7 @@ INSERT INTO Professor (identification, firstName, lastName, departmentId) VALUES
 ('P008', 'Luis', 'Vega', 3),
 ('P009', 'Carolina', 'Rojas', 3);
 
-INSERT INTO Course (name, description, professorId) VALUES 
+INSERT INTO course (name, description, professorId) VALUES 
 ('Basic Programming', 'Introduction to programming', 'P001'),
 ('Data Structures', 'Use of data structures', 'P002'),
 ('Databases', 'Database management', 'P003'),
@@ -113,7 +107,7 @@ INSERT INTO Course (name, description, professorId) VALUES
 ('Digital Electronics', 'Digital systems', 'P008'),
 ('Embedded Systems', 'Microcontroller programming', 'P009');
 
-INSERT INTO Prerequisite (courseToTake, prerequisiteCourse) VALUES 
+INSERT INTO prerequisite (courseToTake, prerequisiteCourse) VALUES 
 (2, 1),  -- Data Structures requires Basic Programming
 (3, 2),  -- Databases requires Data Structures
 (5, 4),  -- Differential Calculus requires Basic Mathematics
@@ -126,7 +120,8 @@ INSERT INTO EvaluationType (name) VALUES
 ('Exam'),
 ('Project'),
 ('Workshop');
-INSERT INTO Student (identification, firstName, lastName, birthDate) VALUES
+
+INSERT INTO student (identification, firstName, lastName, birthDate) VALUES
 ('E001', 'Juan', 'Perez', '2003-05-12'),
 ('E002', 'Ana', 'Gomez', '2004-07-19'),
 ('E003', 'Carlos', 'Lopez', '2002-03-15'),
@@ -173,8 +168,7 @@ INSERT INTO Student (identification, firstName, lastName, birthDate) VALUES
 ('E044', 'Facundo', 'Rico', '2003-09-30'),
 ('E045', 'Renata', 'Delgado', '2001-12-15');
 
-
-INSERT INTO Enrollment (enrollmentDate, studentId, courseId) VALUES
+INSERT INTO enrollment (enrollmentDate, studentId, courseId) VALUES
 ('2025-03-01', 'E001', 1),
 ('2025-03-01', 'E003', 2),
 ('2025-03-01', 'E005', 3),
@@ -221,7 +215,7 @@ INSERT INTO Enrollment (enrollmentDate, studentId, courseId) VALUES
 ('2025-03-01', 'E010', 8),
 ('2025-03-01', 'E013', 9);
 
-INSERT INTO Schedule (startTime, endTime, dayOfWeek, courseId) VALUES
+INSERT INTO schedule (startTime, endTime, dayOfWeek, courseId) VALUES
 ('07:00:00', '09:00:00', 'Monday', 1),
 ('07:00:00', '09:00:00', 'Thursday', 1),
 ('09:00:00', '11:00:00', 'Monday', 4),
@@ -241,53 +235,52 @@ INSERT INTO Schedule (startTime, endTime, dayOfWeek, courseId) VALUES
 ('13:00:00', '15:00:00', 'Tuesday', 9),
 ('13:00:00', '15:00:00', 'Friday', 9);
 
-INSERT INTO Evaluation (evaluationDate, grade, enrollmentId, evaluationTypeId) VALUES
+INSERT INTO evaluation (evaluationDate, grade, enrollmentId, evaluationTypeId) VALUES
 ('2024-02-01', 4.2, 1, 1), ('2024-02-05', 3.8, 1, 2), ('2024-02-10', 4.5, 1, 3), ('2024-02-11', 3.9, 1, 3),
 ('2024-02-01', 4.3, 2, 1), ('2024-02-05', 3.9, 2, 2), ('2024-02-10', 4.6, 2, 3), ('2024-02-11', 4.0, 2, 3),
 ('2024-02-01', 4.1, 3, 1), ('2024-02-05', 3.7, 3, 2), ('2024-02-10', 4.4, 3, 3), ('2024-02-11', 3.8, 3, 3),
 ('2024-02-01', 4.0, 4, 1), ('2024-02-05', 3.6, 4, 2), ('2024-02-10', 4.2, 4, 3), ('2024-02-11', 3.7, 4, 3),
 ('2024-02-01', 4.5, 5, 1), ('2024-02-05', 4.0, 5, 2), ('2024-02-10', 4.7, 5, 3), ('2024-02-11', 4.2, 5, 3);
 
-SELECT * FROM University;
-SELECT * FROM Department;
-SELECT * FROM Professor;
-SELECT * FROM Course;
-SELECT * FROM Prerequisite;
-SELECT * FROM Student;
-SELECT * FROM Enrollment;
-SELECT * FROM EvaluationType;
-SELECT * FROM Evaluation;
-SELECT * FROM Schedule;
+SELECT * FROM university;
+SELECT * FROM department;
+SELECT * FROM professor;
+SELECT * FROM course;
+SELECT * FROM prerequisite;
+SELECT * FROM student;
+SELECT * FROM enrollment;
+SELECT * FROM evaluationType;
+SELECT * FROM evaluation;
+SELECT * FROM schedule;
 
 -- Student along with the course they are enrolled in
 SELECT S.identification, S.firstName, S.lastName, C.name AS Course
-FROM Student S
-JOIN Enrollment E ON S.identification = E.studentId
-JOIN Course C ON E.courseId = C.id;
+FROM student S
+JOIN enrollment E ON S.identification = E.studentId
+JOIN course C ON E.courseId = C.id;
 
 -- Complete information of the evaluation
 SELECT 
     Eval.id AS EvaluationID,
     Eval.evaluationDate,
     Eval.grade,
-    Eval.evaluationType,
     E.id AS EnrollmentID,
     ET.name AS EvaluationType,
     S.firstName AS Student,
     C.name AS Course
-FROM Evaluation Eval
-JOIN Enrollment E ON Eval.enrollmentId = E.id
-JOIN Student S ON E.studentId = S.identification
-JOIN Course C ON E.courseId = C.id
-JOIN EvaluationType ET ON Eval.evaluationTypeId = ET.id;
+FROM evaluation Eval
+JOIN enrollment E ON Eval.enrollmentId = E.id
+JOIN student S ON E.studentId = S.identification
+JOIN course C ON E.courseId = C.id
+JOIN evaluationType ET ON Eval.evaluationTypeId = ET.id;
 
 -- Complete information of the course
 SELECT 
     C.id AS CourseID,
     C.name AS CourseName,
     CONCAT(P.firstName, ' ', P.lastName) AS Professor
-FROM Course C
-JOIN Professor P ON C.professorId = P.identification;
+FROM course C
+JOIN professor P ON C.professorId = P.identification;
 
 -- Prerequisites of the course
 SELECT 
@@ -295,8 +288,6 @@ SELECT
     CT.name AS CourseToTake,
     P.prerequisiteCourse AS Prerequisite,
     PC.name AS PrerequisiteCourse
-FROM Prerequisite P
-JOIN Course CT ON P.courseToTake = CT.id
-JOIN Course PC ON P.prerequisiteCourse = PC.id;
-
-
+FROM prerequisite P
+JOIN course CT ON P.courseToTake = CT.id
+JOIN course PC ON P.prerequisiteCourse = PC.id;
