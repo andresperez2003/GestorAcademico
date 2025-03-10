@@ -1,84 +1,87 @@
-CREATE DATABASE IF NOT exists AcademicManager; 
+CREATE DATABASE IF NOT EXISTS AcademicManager;
 
 USE AcademicManager;
 
+CREATE TABLE User (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE University(
-	id int Primary key auto_increment,
-    name varchar(50)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50)
 );
 
 CREATE TABLE Department(
-	id int Primary key auto_increment,
-    name varchar(50),
-    universityId int,
-    Foreign key(universityId) References University(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    universityId INT,
+    FOREIGN KEY (universityId) REFERENCES University(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
 CREATE TABLE Professor(
-	identification varchar(20) primary key,
-    firstName varchar(30),
-    lastName varchar(30),
-    departmentId int,
-    Foreign key(departmentId) references Department(id)
+    identification VARCHAR(20) PRIMARY KEY,
+    firstName VARCHAR(30),
+    lastName VARCHAR(30),
+    departmentId INT,
+    FOREIGN KEY (departmentId) REFERENCES Department(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Course(
-	id int primary key auto_increment,
-    name varchar(30),
-    description varchar(100),
-    professorId varchar(20),
-    foreign key(professorId) references Professor(identification)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(30),
+    description VARCHAR(100),
+    professorId VARCHAR(20),
+    FOREIGN KEY (professorId) REFERENCES Professor(identification) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Prerequisite(
-	id int primary key auto_increment,
-    courseToTake int,
-    prerequisiteCourse int,
-    foreign key(courseToTake) references Course(id),
-    foreign key(prerequisiteCourse) references Course(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    courseToTake INT,
+    prerequisiteCourse INT,
+    FOREIGN KEY (courseToTake) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (prerequisiteCourse) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Student(
-	identification varchar(20) primary key,
-    firstName varchar(30),
-    lastName varchar(30),
-    birthDate Date
+    identification VARCHAR(20) PRIMARY KEY,
+    firstName VARCHAR(30),
+    lastName VARCHAR(30),
+    birthDate DATE
 );
 
 CREATE TABLE Enrollment(
-	id int primary key auto_increment,
-    enrollmentDate Date,
-    studentId varchar(20),
-    courseId int,
-    foreign key(studentId) references Student(identification),
-    foreign key(courseId) references Course(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    enrollmentDate DATE,
+    studentId VARCHAR(20),
+    courseId INT,
+    FOREIGN KEY (studentId) REFERENCES Student(identification) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE EvaluationType(
-	id int primary key auto_increment,
-    name varchar(30),
-    percentage float
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(30)
 );
 
 CREATE TABLE Evaluation(
-	id int primary key auto_increment,
-    evaluationDate Date,
-    grade float,
-    evaluationType varchar(30),
-    enrollmentId int,
-    evaluationTypeId int,
-    foreign key(enrollmentId) references Enrollment(id),
-    foreign key(evaluationTypeId) references EvaluationType(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    evaluationDate DATE,
+    grade FLOAT,
+    evaluationTypeId INT,
+    enrollmentId INT,
+    FOREIGN KEY (evaluationTypeId) REFERENCES EvaluationType(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (enrollmentId) REFERENCES Enrollment(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Schedule(
-	id int primary key auto_increment,
-    startTime time,
-    endTime time,
-    dayOfWeek varchar(10),
-    courseId int,
-    foreign key(courseId) references Course(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    startTime TIME,
+    endTime TIME,
+    dayOfWeek VARCHAR(10),
+    courseId INT,
+    FOREIGN KEY (courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 INSERT INTO University (name) VALUES ('Autonomous University of Manizales');
@@ -119,10 +122,10 @@ INSERT INTO Prerequisite (courseToTake, prerequisiteCourse) VALUES
 (9, 7),  -- Embedded Systems requires Electrical Circuits
 (9, 8);  -- Embedded Systems requires Digital Electronics
 
-INSERT INTO EvaluationType (name, percentage) VALUES 
-('Exam', 50.0),
-('Project', 45.0),
-('Workshop', 5.0);
+INSERT INTO EvaluationType (name) VALUES 
+('Exam'),
+('Project'),
+('Workshop');
 INSERT INTO Student (identification, firstName, lastName, birthDate) VALUES
 ('E001', 'Juan', 'Perez', '2003-05-12'),
 ('E002', 'Ana', 'Gomez', '2004-07-19'),
@@ -238,53 +241,12 @@ INSERT INTO Schedule (startTime, endTime, dayOfWeek, courseId) VALUES
 ('13:00:00', '15:00:00', 'Tuesday', 9),
 ('13:00:00', '15:00:00', 'Friday', 9);
 
--- Insert Evaluations
-INSERT INTO Evaluation (evaluationDate, grade, evaluationType, enrollmentId, evaluationTypeId) VALUES
-('2024-02-01', 4.2, 'Exam', 1, 1),  ('2024-02-05', 3.8, 'Project', 1, 2),  ('2024-02-10', 4.5, 'Workshop', 1, 3),  ('2024-02-11', 3.9, 'Workshop', 1, 3),
-('2024-02-01', 4.3, 'Exam', 2, 1),  ('2024-02-05', 3.9, 'Project', 2, 2),  ('2024-02-10', 4.6, 'Workshop', 2, 3),  ('2024-02-11', 4.0, 'Workshop', 2, 3),
-('2024-02-01', 4.1, 'Exam', 3, 1),  ('2024-02-05', 3.7, 'Project', 3, 2),  ('2024-02-10', 4.4, 'Workshop', 3, 3),  ('2024-02-11', 3.8, 'Workshop', 3, 3),
-('2024-02-01', 4.4, 'Exam', 4, 1),  ('2024-02-05', 4.0, 'Project', 4, 2),  ('2024-02-10', 4.7, 'Workshop', 4, 3),  ('2024-02-11', 4.1, 'Workshop', 4, 3),
-('2024-02-01', 4.0, 'Exam', 5, 1),  ('2024-02-05', 3.6, 'Project', 5, 2),  ('2024-02-10', 4.3, 'Workshop', 5, 3),  ('2024-02-11', 3.7, 'Workshop', 5, 3),
-('2024-02-01', 4.2, 'Exam', 6, 1),  ('2024-02-05', 3.8, 'Project', 6, 2),  ('2024-02-10', 4.5, 'Workshop', 6, 3),  ('2024-02-11', 3.9, 'Workshop', 6, 3),
-('2024-02-01', 4.3, 'Exam', 7, 1),  ('2024-02-05', 3.9, 'Project', 7, 2),  ('2024-02-10', 4.6, 'Workshop', 7, 3),  ('2024-02-11', 4.0, 'Workshop', 7, 3),
-('2024-02-01', 4.1, 'Exam', 8, 1),  ('2024-02-05', 3.7, 'Project', 8, 2),  ('2024-02-10', 4.4, 'Workshop', 8, 3),  ('2024-02-11', 3.8, 'Workshop', 8, 3),
-('2024-02-01', 4.4, 'Exam', 9, 1),  ('2024-02-05', 4.0, 'Project', 9, 2),  ('2024-02-10', 4.7, 'Workshop', 9, 3),  ('2024-02-11', 4.1, 'Workshop', 9, 3),
-('2024-02-01', 4.0, 'Exam', 10, 1), ('2024-02-05', 3.6, 'Project', 10, 2), ('2024-02-10', 4.3, 'Workshop', 10, 3), ('2024-02-11', 3.7, 'Workshop', 10, 3),
-('2024-02-01', 4.2, 'Exam', 11, 1), ('2024-02-05', 3.8, 'Project', 11, 2), ('2024-02-10', 4.5, 'Workshop', 11, 3), ('2024-02-11', 3.9, 'Workshop', 11, 3),
-('2024-02-01', 4.3, 'Exam', 12, 1), ('2024-02-05', 3.9, 'Project', 12, 2), ('2024-02-10', 4.6, 'Workshop', 12, 3), ('2024-02-11', 4.0, 'Workshop', 12, 3),
-('2024-02-01', 4.1, 'Exam', 13, 1), ('2024-02-05', 3.7, 'Project', 13, 2), ('2024-02-10', 4.4, 'Workshop', 13, 3), ('2024-02-11', 3.8, 'Workshop', 13, 3),
-('2024-02-01', 4.4, 'Exam', 14, 1), ('2024-02-05', 4.0, 'Project', 14, 2), ('2024-02-10', 4.7, 'Workshop', 14, 3), ('2024-02-11', 4.1, 'Workshop', 14, 3),
-('2024-02-01', 4.0, 'Exam', 15, 1), ('2024-02-05', 3.6, 'Project', 15, 2), ('2024-02-10', 4.3, 'Workshop', 15, 3), ('2024-02-11', 3.7, 'Workshop', 15, 3),
-('2024-02-01', 4.2, 'Exam', 16, 1), ('2024-02-05', 3.8, 'Project', 16, 2), ('2024-02-10', 4.5, 'Workshop', 16, 3), ('2024-02-11', 3.9, 'Workshop', 16, 3),
-('2024-02-01', 4.3, 'Exam', 17, 1), ('2024-02-05', 3.9, 'Project', 17, 2), ('2024-02-10', 4.6, 'Workshop', 17, 3), ('2024-02-11', 4.0, 'Workshop', 17, 3),
-('2024-02-01', 4.1, 'Exam', 18, 1), ('2024-02-05', 3.7, 'Project', 18, 2), ('2024-02-10', 4.4, 'Workshop', 18, 3), ('2024-02-11', 3.8, 'Workshop', 18, 3),
-('2024-02-01', 4.4, 'Exam', 19, 1), ('2024-02-05', 4.0, 'Project', 19, 2), ('2024-02-10', 4.7, 'Workshop', 19, 3), ('2024-02-11', 4.1, 'Workshop', 19, 3),
-('2024-02-01', 4.0, 'Exam', 20, 1), ('2024-02-05', 3.6, 'Project', 20, 2), ('2024-02-10', 4.3, 'Workshop', 20, 3), ('2024-02-11', 3.7, 'Workshop', 20, 3),
-('2024-02-01', 4.2, 'Exam', 21, 1), ('2024-02-05', 3.8, 'Project', 21, 2), ('2024-02-10', 4.5, 'Workshop', 21, 3), ('2024-02-11', 3.9, 'Workshop', 21, 3),
-('2024-02-01', 4.3, 'Exam', 22, 1), ('2024-02-05', 3.9, 'Project', 22, 2), ('2024-02-10', 4.6, 'Workshop', 22, 3), ('2024-02-11', 4.0, 'Workshop', 22, 3),
-('2024-02-01', 4.1, 'Exam', 23, 1), ('2024-02-05', 3.7, 'Project', 23, 2), ('2024-02-10', 4.4, 'Workshop', 23, 3), ('2024-02-11', 3.8, 'Workshop', 23, 3),
-('2024-02-01', 4.4, 'Exam', 24, 1), ('2024-02-05', 4.0, 'Project', 24, 2), ('2024-02-10', 4.7, 'Workshop', 24, 3), ('2024-02-11', 4.1, 'Workshop', 24, 3),
-('2024-02-01', 4.0, 'Exam', 25, 1), ('2024-02-05', 3.6, 'Project', 25, 2), ('2024-02-10', 4.3, 'Workshop', 25, 3), ('2024-02-11', 3.7, 'Workshop', 25, 3),
-('2024-02-01', 4.2, 'Exam', 26, 1), ('2024-02-05', 3.8, 'Project', 26, 2), ('2024-02-10', 4.5, 'Workshop', 26, 3), ('2024-02-11', 3.9, 'Workshop', 26, 3),
-('2024-02-01', 4.3, 'Exam', 27, 1), ('2024-02-05', 3.9, 'Project', 27, 2), ('2024-02-10', 4.6, 'Workshop', 27, 3), ('2024-02-11', 4.0, 'Workshop', 27, 3),
-('2024-02-01', 4.1, 'Exam', 28, 1), ('2024-02-05', 3.7, 'Project', 28, 2), ('2024-02-10', 4.4, 'Workshop', 28, 3), ('2024-02-11', 3.8, 'Workshop', 28, 3),
-('2024-02-01', 4.4, 'Exam', 29, 1), ('2024-02-05', 4.0, 'Project', 29, 2), ('2024-02-10', 4.7, 'Workshop', 29, 3), ('2024-02-11', 4.1, 'Workshop', 29, 3),
-('2024-02-01', 4.0, 'Exam', 30, 1), ('2024-02-05', 3.6, 'Project', 30, 2), ('2024-02-10', 4.3, 'Workshop', 30, 3), ('2024-02-11', 3.7, 'Workshop', 30, 3),
-('2024-02-01', 4.2, 'Exam', 31, 1), ('2024-02-05', 3.8, 'Project', 31, 2), ('2024-02-10', 4.5, 'Workshop', 31, 3), ('2024-02-11', 3.9, 'Workshop', 31, 3),
-('2024-02-01', 4.3, 'Exam', 32, 1), ('2024-02-05', 3.9, 'Project', 32, 2), ('2024-02-10', 4.6, 'Workshop', 32, 3), ('2024-02-11', 4.0, 'Workshop', 32, 3),
-('2024-02-01', 4.1, 'Exam', 33, 1), ('2024-02-05', 3.7, 'Project', 33, 2), ('2024-02-10', 4.4, 'Workshop', 33, 3), ('2024-02-11', 3.8, 'Workshop', 33, 3),
-('2024-02-01', 4.4, 'Exam', 34, 1), ('2024-02-05', 4.0, 'Project', 34, 2), ('2024-02-10', 4.7, 'Workshop', 34, 3), ('2024-02-11', 4.1, 'Workshop', 34, 3),
-('2024-02-01', 4.0, 'Exam', 35, 1), ('2024-02-05', 3.6, 'Project', 35, 2), ('2024-02-10', 4.3, 'Workshop', 35, 3), ('2024-02-11', 3.7, 'Workshop', 35, 3),
-('2024-02-01', 4.2, 'Exam', 36, 1), ('2024-02-05', 3.8, 'Project', 36, 2), ('2024-02-10', 4.5, 'Workshop', 36, 3), ('2024-02-11', 3.9, 'Workshop', 36, 3),
-('2024-02-01', 4.3, 'Exam', 37, 1), ('2024-02-05', 3.9, 'Project', 37, 2), ('2024-02-10', 4.6, 'Workshop', 37, 3), ('2024-02-11', 4.0, 'Workshop', 37, 3),
-('2024-02-01', 4.1, 'Exam', 38, 1), ('2024-02-05', 3.7, 'Project', 38, 2), ('2024-02-10', 4.4, 'Workshop', 38, 3), ('2024-02-11', 3.8, 'Workshop', 38, 3),
-('2024-02-01', 4.4, 'Exam', 39, 1), ('2024-02-05', 4.0, 'Project', 39, 2), ('2024-02-10', 4.7, 'Workshop', 39, 3), ('2024-02-11', 4.1, 'Workshop', 39, 3),
-('2024-02-01', 4.0, 'Exam', 40, 1), ('2024-02-05', 3.6, 'Project', 40, 2), ('2024-02-10', 4.3, 'Workshop', 40, 3), ('2024-02-11', 3.7, 'Workshop', 40, 3),
-('2024-02-01', 4.2, 'Exam', 41, 1), ('2024-02-05', 3.8, 'Project', 41, 2), ('2024-02-10', 4.5, 'Workshop', 41, 3), ('2024-02-11', 3.9, 'Workshop', 41, 3),
-('2024-02-01', 4.3, 'Exam', 42, 1), ('2024-02-05', 3.9, 'Project', 42, 2), ('2024-02-10', 4.6, 'Workshop', 42, 3), ('2024-02-11', 4.0, 'Workshop', 42, 3),
-('2024-02-01', 4.1, 'Exam', 43, 1), ('2024-02-05', 3.7, 'Project', 43, 2), ('2024-02-10', 4.4, 'Workshop', 43, 3), ('2024-02-11', 3.8, 'Workshop', 43, 3),
-('2024-02-01', 4.4, 'Exam', 44, 1), ('2024-02-05', 4.0, 'Project', 44, 2), ('2024-02-10', 4.7, 'Workshop', 44, 3), ('2024-02-11', 4.1, 'Workshop', 44, 3),
-('2024-02-01', 4.0, 'Exam', 45, 1), ('2024-02-05', 3.6, 'Project', 45, 2), ('2024-02-10', 4.3, 'Workshop', 45, 3), ('2024-02-11', 3.7, 'Workshop', 45, 3);
+INSERT INTO Evaluation (evaluationDate, grade, enrollmentId, evaluationTypeId) VALUES
+('2024-02-01', 4.2, 1, 1), ('2024-02-05', 3.8, 1, 2), ('2024-02-10', 4.5, 1, 3), ('2024-02-11', 3.9, 1, 3),
+('2024-02-01', 4.3, 2, 1), ('2024-02-05', 3.9, 2, 2), ('2024-02-10', 4.6, 2, 3), ('2024-02-11', 4.0, 2, 3),
+('2024-02-01', 4.1, 3, 1), ('2024-02-05', 3.7, 3, 2), ('2024-02-10', 4.4, 3, 3), ('2024-02-11', 3.8, 3, 3),
+('2024-02-01', 4.0, 4, 1), ('2024-02-05', 3.6, 4, 2), ('2024-02-10', 4.2, 4, 3), ('2024-02-11', 3.7, 4, 3),
+('2024-02-01', 4.5, 5, 1), ('2024-02-05', 4.0, 5, 2), ('2024-02-10', 4.7, 5, 3), ('2024-02-11', 4.2, 5, 3);
 
 SELECT * FROM University;
 SELECT * FROM Department;

@@ -1,10 +1,12 @@
 // course.controller.ts
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; 
 
 @Controller('courses')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 

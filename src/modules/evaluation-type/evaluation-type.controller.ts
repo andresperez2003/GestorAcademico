@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { EvaluationTypeService } from './evaluation-type.service';
 import { CreateEvaluationTypeDto } from './dto/create-evaluation-type.dto';
 import { UpdateEvaluationTypeDto } from './dto/update-evaluation-type.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // 👈 Importa el guard
+
 
 @Controller('evaluation-type')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class EvaluationTypeController {
 
     constructor(private readonly evaluationTypeService: EvaluationTypeService) {}

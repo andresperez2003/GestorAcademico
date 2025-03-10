@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { EvaluationService } from './evaluation.service';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('evaluation')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class EvaluationController {
   constructor(private readonly evaluationService: EvaluationService) {}
 

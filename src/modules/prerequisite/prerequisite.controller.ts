@@ -1,10 +1,11 @@
-// prerequisite.controller.ts
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { PrerequisiteService } from './prerequisite.service';
 import { CreatePrerequisiteDto } from './dto/create-prerequisite.dto';
 import { UpdatePrerequisiteDto } from './dto/update-prerequisite.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // 👈 Importa el guard
 
 @Controller('prerequisites')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class PrerequisiteController {
   constructor(private readonly prerequisiteService: PrerequisiteService) {}
 

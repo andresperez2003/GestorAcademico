@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { EnrollmentService } from './enrollment.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('enrollment')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class EnrollmentController {
 
   constructor(private readonly enrollmentService: EnrollmentService) {}

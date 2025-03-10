@@ -21,6 +21,10 @@ import { Professor } from 'src/modules/professor/professor.entity';
 import { Schedule } from 'src/modules/schedule/schedule.entity';
 import { Enrollment } from 'src/modules/enrollment/enrollment.entity';
 
+// 👇 Importamos los módulos de autenticación
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { UsersModule } from 'src/modules/users/users.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // 👈 Habilita el uso de variables de entorno
@@ -44,6 +48,8 @@ import { Enrollment } from 'src/modules/enrollment/enrollment.entity';
     ScheduleModule,
     EnrollmentModule,
     EvaluationModule,
+    AuthModule,  // 👈 Agregamos autenticación
+    UsersModule, // 👈 Agregamos gestión de usuarios
   ],
 })
 export class AppModule {}

@@ -1,10 +1,11 @@
-// professor.controller.ts
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { CreateProfessorDto } from './dto/create-professor.dto';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // 👈 Importa el guard
 
 @Controller('professors')
+@UseGuards(JwtAuthGuard) // 👈 Protege TODAS las rutas del controlador
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
 
